@@ -4,19 +4,46 @@ import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
 import 'package:active_ecommerce_flutter/XDsignuppage.dart';
+import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 
-class Loginpage extends StatelessWidget {
-  Loginpage({
-    Key key,
-  }) : super(key: key);
+
+class Loginpage extends StatefulWidget {
+
+  @override
+  LoginpageState createState() => LoginpageState();
+}
+
+class LoginpageState extends State<Loginpage> {
+  var passw = TextEditingController();
+  var phone = TextEditingController();
+
+
+  login(){
+    DoctorsData().authenticateUser(phone.text, passw.text).then((value) => {
+      if(value){
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => BottomBar())),
+      }else{
+        print("No user"),
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
-        width:MediaQuery.of(context).size.width ,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-         // borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+          // borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
           gradient: LinearGradient(
             begin: Alignment(-0.98, 0.31),
             end: Alignment(-0.46, -0.49),
@@ -26,7 +53,6 @@ class Loginpage extends StatelessWidget {
         ),
         child: Center(
           child: Container(
-
             child: Center(
               child: Stack(
                 children: <Widget>[
@@ -77,23 +103,33 @@ class Loginpage extends StatelessWidget {
                     Pin(size: 37.0, middle: 0.4689),
                     child: PageLink(
                       links: [
-                        PageLinkInfo(
-                          ease: Curves.easeOut,
-                          duration: 1.0,
-                          pageBuilder: () => BottomBar(),
-                        ),
+                        // PageLinkInfo(
+                        //   ease: Curves.easeOut,
+                        //   duration: 1.0,
+                        //   pageBuilder: () => BottomBar(),
+                        // ),
                       ],
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: const Color(0xff6b0772),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0x29000000),
-                              offset: Offset(6, 3),
-                              blurRadius: 6,
-                            ),
-                          ],
+                      child: GestureDetector(
+                        onTap: () {
+                          if (passw.text.isNotEmpty && phone.text.isNotEmpty) {
+                           login();
+                          } else {
+                            print("Enter values");
+                            print(username.value);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: const Color(0xff6b0772),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0x29000000),
+                                offset: Offset(6, 3),
+                                blurRadius: 6,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -105,7 +141,8 @@ class Loginpage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         color: const Color(0xffffffff),
-                        border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                        border: Border.all(
+                            width: 1.0, color: const Color(0xfff6d3eb)),
                         boxShadow: [
                           BoxShadow(
                             color: const Color(0xfff6d3eb),
@@ -114,6 +151,22 @@ class Loginpage extends StatelessWidget {
                           ),
                         ],
                       ),
+                      child: TextFormField(
+                          obscureText: false,
+                          controller: phone,
+                          decoration: InputDecoration(
+                            hintText: 'Phone Number',
+                            hintStyle: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 15,
+                              color: const Color(0xff858585),
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.only(
+                                left: 15, bottom: 15, top: 15, right: 15),
+                            filled: false,
+                            isDense: false,
+                          )),
                     ),
                   ),
                   Pinned.fromPins(
@@ -123,7 +176,8 @@ class Loginpage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         color: const Color(0xfff6d3eb),
-                        border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                        border: Border.all(
+                            width: 1.0, color: const Color(0xfff6d3eb)),
                         boxShadow: [
                           BoxShadow(
                             color: const Color(0xfff6d3eb),
@@ -132,32 +186,22 @@ class Loginpage extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 70.0, start: 43.0),
-                    Pin(size: 17.0, middle: 0.2961),
-                    child: Text(
-                      'Username',
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: 15,
-                        color: const Color(0xff858585),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Pinned.fromPins(
-                    Pin(size: 66.0, start: 43.0),
-                    Pin(size: 17.0, middle: 0.3661),
-                    child: Text(
-                      'Password',
-                      style: TextStyle(
-                        fontFamily: 'Arial',
-                        fontSize: 15,
-                        color: const Color(0xff858585),
-                      ),
-                      textAlign: TextAlign.center,
+                      child: TextFormField(
+                          obscureText: true,
+                          controller: passw,
+                          decoration: InputDecoration(
+                            hintText: 'Password',
+                            hintStyle: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 15,
+                              color: const Color(0xff858585),
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.only(
+                                left: 15, bottom: 15, top: 15, right: 15),
+                            filled: false,
+                            isDense: false,
+                          )),
                     ),
                   ),
                   Pinned.fromPins(

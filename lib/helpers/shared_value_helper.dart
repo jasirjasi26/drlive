@@ -6,6 +6,18 @@ final SharedValue<bool> is_logged_in = SharedValue(
   autosave: true, // autosave to shared prefs when value changes
 );
 
+final SharedValue<String> username = SharedValue(
+  value: "", // initial value
+  key: "username", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
+
+final SharedValue<String> pass = SharedValue(
+  value: "", // initial value
+  key: "password", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
+
 final SharedValue<String> access_token = SharedValue(
   value: "", // initial value
   key: "access_token", // disk storage key for shared_preferences
@@ -39,5 +51,20 @@ final SharedValue<String> user_email = SharedValue(
 final SharedValue<String> user_phone = SharedValue(
   value: "", // initial value
   key: "user_phone", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
+final SharedValue<String> user_address = SharedValue(
+  value: "", // initial value
+  key: "user_address", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
+final SharedValue<String> user_dob = SharedValue(
+  value: "", // initial value
+  key: "user_dob", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
+final SharedValue<String> user_gender = SharedValue(
+  value: "", // initial value
+  key: "user_gender", // disk storage key for shared_preferences
   autosave: true, // autosave to shared prefs when value changes
 );

@@ -1,16 +1,14 @@
 import 'dart:ui';
 import 'package:active_ecommerce_flutter/app_config.dart';
-import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/screens/patientScreens/main.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'dart:async';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
-import 'package:active_ecommerce_flutter/screens/patientScreens/login.dart';
-
+import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
 import 'package:active_ecommerce_flutter/screens/doctorScreens/doctor_home.dart';
 import 'package:flutter/services.dart';
-import 'package:active_ecommerce_flutter/repositories/auth_repository.dart';
+import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
+import 'package:active_ecommerce_flutter/XDlogin_page.dart';
 
 
 class Splash extends StatefulWidget {
@@ -26,27 +24,23 @@ class _SplashState extends State<Splash> {
     buildNumber: 'Unknown',
   );
 
-
-  fetch_user() async{
-    var userByTokenResponse =
-    await AuthRepository().getUserByTokenResponse();
-
-    if (userByTokenResponse.result == true) {
-      is_logged_in.value  = true;
-      user_id.value = userByTokenResponse.id;
-      user_name.value = userByTokenResponse.name;
-      user_email.value = userByTokenResponse.email;
-      user_phone.value = userByTokenResponse.phone;
-      avatar_original.value = userByTokenResponse.avatar_original;
-    }
+ Future<String> fetchUser(){
+      DoctorsData().authenticateUser("8129902900", "password").then((value) => {
+        if(value){
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (BuildContext context) => BottomBar())),
+        }else{
+          print("No user"),
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (BuildContext context) => Loginpage())),
+        }
+      });
   }
 
   @override
   void initState() {
-
-    //on Splash Screen hide statusbar
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-    fetch_user();
+    fetchUser();
     super.initState();
 
     _initPackageInfo();
@@ -66,13 +60,6 @@ class _SplashState extends State<Splash> {
     setState(() {
       _packageInfo = info;
     });
-  }
-
-  Future<Widget> loadFromFuture() async {
-
-    // <fetch data from server. ex. login>
-
-    return Future.value( Main());
   }
 
   @override
@@ -97,12 +84,12 @@ class _SplashState extends State<Splash> {
 
             //comment this bottom navigation
             ///original
-            //navigateAfterSeconds: user_id.value !=  null ? Main() : Login(),
-            navigateAfterSeconds:DoctorHome() ,
+            //navigateAfterSeconds: user_id.value !=  null ? BottomBar() : Loginpage(),
+           // navigateAfterSeconds:DoctorHome(),
            // navigateAfterSeconds: Login(),
 
 
-            //navigateAfterFuture: loadFromFuture(), //uncomment this
+            navigateAfterFuture: fetchUser(), //uncomment this
             title: Text(
               "Doctor Live " + _packageInfo.version,
               style: TextStyle(

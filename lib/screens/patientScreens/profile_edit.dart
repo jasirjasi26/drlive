@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
-import 'package:active_ecommerce_flutter/custom/toast_component.dart';
-import 'package:toast/toast.dart';
 import 'package:active_ecommerce_flutter/custom/input_decorations.dart';
-import 'package:active_ecommerce_flutter/repositories/profile_repositories.dart';
 import 'dart:io';
-import 'dart:convert';
 import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
 import 'package:adobe_xd/pinned.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProfileEdit extends StatefulWidget {
@@ -32,8 +26,40 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   TextEditingController _nameController =
       TextEditingController(text: "${user_name.value}");
-
+  TextEditingController _phoneController =
+  TextEditingController(text: "${user_phone.value}");
+  TextEditingController _dobController =
+  TextEditingController(text: "${user_dob.value}");
+  TextEditingController _addressController =
+  TextEditingController(text: "${user_address.value}");
   int _radioValue1 = 0;
+
+  getGender(){
+    if(user_gender.value=="male"){
+        setState(() {
+          _radioValue1=0;
+        });
+    }
+    if(user_gender.value=="female"){
+      setState(() {
+        _radioValue1=1;
+      });
+    }
+    if(user_gender.value=="other"){
+      setState(() {
+        _radioValue1=2;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    getGender();
+    super.initState();
+  }
+
+
+
 
   void _handleRadioValueChange1(int value) {
     setState(() {
@@ -44,124 +70,124 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   //for image uploading
   File _file;
-
-  chooseAndUploadImage(context) async {
-    var status = await Permission.photos.request();
-
-    if (status.isDenied) {
-      // We didn't ask for permission yet.
-      showDialog(
-          context: context,
-          builder: (BuildContext context) => CupertinoAlertDialog(
-                title: Text('Photo Permission'),
-                content: Text(
-                    'This app needs photo to take pictures for upload user profile photo'),
-                actions: <Widget>[
-                  CupertinoDialogAction(
-                    child: Text('Deny'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  CupertinoDialogAction(
-                    child: Text('Settings'),
-                    onPressed: () => openAppSettings(),
-                  ),
-                ],
-              ));
-    } else if (status.isRestricted) {
-      ToastComponent.showDialog(
-          "Go to your application settings and give photo permission ",
-          context,
-          gravity: Toast.CENTER,
-          duration: Toast.LENGTH_LONG);
-    } else if (status.isGranted) {
-      //file = await ImagePicker.pickImage(source: ImageSource.camera);
-      _file = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-      if (_file == null) {
-        ToastComponent.showDialog("No file is chosen", context,
-            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-        return;
-      }
-
-      //return;
-      String base64Image = base64Encode(_file.readAsBytesSync());
-      String fileName = _file.path.split("/").last;
-
-      var profileImageUpdateResponse =
-          await ProfileRepository().getProfileImageUpdateResponse(
-        base64Image,
-        fileName,
-      );
-
-      if (profileImageUpdateResponse.result == false) {
-        ToastComponent.showDialog(profileImageUpdateResponse.message, context,
-            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-        return;
-      } else {
-        ToastComponent.showDialog(profileImageUpdateResponse.message, context,
-            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-
-        avatar_original.value = profileImageUpdateResponse.path;
-        setState(() {});
-      }
-    }
-  }
+  //
+  // chooseAndUploadImage(context) async {
+  //   var status = await Permission.photos.request();
+  //
+  //   if (status.isDenied) {
+  //     // We didn't ask for permission yet.
+  //     showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) => CupertinoAlertDialog(
+  //               title: Text('Photo Permission'),
+  //               content: Text(
+  //                   'This app needs photo to take pictures for upload user profile photo'),
+  //               actions: <Widget>[
+  //                 CupertinoDialogAction(
+  //                   child: Text('Deny'),
+  //                   onPressed: () => Navigator.of(context).pop(),
+  //                 ),
+  //                 CupertinoDialogAction(
+  //                   child: Text('Settings'),
+  //                   onPressed: () => openAppSettings(),
+  //                 ),
+  //               ],
+  //             ));
+  //   } else if (status.isRestricted) {
+  //     ToastComponent.showDialog(
+  //         "Go to your application settings and give photo permission ",
+  //         context,
+  //         gravity: Toast.CENTER,
+  //         duration: Toast.LENGTH_LONG);
+  //   } else if (status.isGranted) {
+  //     //file = await ImagePicker.pickImage(source: ImageSource.camera);
+  //     _file = await ImagePicker.pickImage(source: ImageSource.gallery);
+  //
+  //     if (_file == null) {
+  //       ToastComponent.showDialog("No file is chosen", context,
+  //           gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //       return;
+  //     }
+  //
+  //     //return;
+  //     String base64Image = base64Encode(_file.readAsBytesSync());
+  //     String fileName = _file.path.split("/").last;
+  //
+  //   //   var profileImageUpdateResponse =
+  //   //       await ProfileRepository().getProfileImageUpdateResponse(
+  //   //     base64Image,
+  //   //     fileName,
+  //   //   );
+  //   //
+  //   //   if (profileImageUpdateResponse.result == false) {
+  //   //     ToastComponent.showDialog(profileImageUpdateResponse.message, context,
+  //   //         gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //     return;
+  //   //   } else {
+  //   //     ToastComponent.showDialog(profileImageUpdateResponse.message, context,
+  //   //         gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //
+  //   //     avatar_original.value = profileImageUpdateResponse.path;
+  //   //     setState(() {});
+  //   //   }
+  //    }
+  // }
 
   Future<void> _onPageRefresh() async {}
 
-  onPressUpdate() async {
-    var name = _nameController.text.toString();
-   // var password = _passwordController.text.toString();
-    //var password_confirm = _passwordConfirmController.text.toString();
-
-    // var change_password = password != "" ||
-    //     password_confirm !=
-    //         ""; // if both fields are empty we will not change user's password
-    //
-    // if (name == "") {
-    //   ToastComponent.showDialog("Enter your name", context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //   return;
-    // }
-    // if (change_password && password == "") {
-    //   ToastComponent.showDialog("Enter password", context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //   return;
-    // }
-    // if (change_password && password_confirm == "") {
-    //   ToastComponent.showDialog("Confirm your password", context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //   return;
-    // }
-    // if (change_password && password.length < 6) {
-    //   ToastComponent.showDialog(
-    //       "Password must contain atleast 6 characters", context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //   return;
-    // }
-    // if (change_password && password != password_confirm) {
-    //   ToastComponent.showDialog("Passwords do not match", context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //   return;
-    // }
-
-    // var profileUpdateResponse =
-    //     await ProfileRepository().getProfileUpdateResponse(
-    //   name,
-    //   change_password ? password : "",
-    // );
-
-    // if (profileUpdateResponse.result == false) {
-    //   ToastComponent.showDialog(profileUpdateResponse.message, context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    // } else {
-    //   ToastComponent.showDialog(profileUpdateResponse.message, context,
-    //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //
-    //   user_name.value = name;
-    //   setState(() {});
-    // }
-  }
+  // onPressUpdate() async {
+  //   var name = _nameController.text.toString();
+  //  // var password = _passwordController.text.toString();
+  //   //var password_confirm = _passwordConfirmController.text.toString();
+  //
+  //   // var change_password = password != "" ||
+  //   //     password_confirm !=
+  //   //         ""; // if both fields are empty we will not change user's password
+  //   //
+  //   // if (name == "") {
+  //   //   ToastComponent.showDialog("Enter your name", context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //   return;
+  //   // }
+  //   // if (change_password && password == "") {
+  //   //   ToastComponent.showDialog("Enter password", context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //   return;
+  //   // }
+  //   // if (change_password && password_confirm == "") {
+  //   //   ToastComponent.showDialog("Confirm your password", context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //   return;
+  //   // }
+  //   // if (change_password && password.length < 6) {
+  //   //   ToastComponent.showDialog(
+  //   //       "Password must contain atleast 6 characters", context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //   return;
+  //   // }
+  //   // if (change_password && password != password_confirm) {
+  //   //   ToastComponent.showDialog("Passwords do not match", context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //   return;
+  //   // }
+  //
+  //   // var profileUpdateResponse =
+  //   //     await ProfileRepository().getProfileUpdateResponse(
+  //   //   name,
+  //   //   change_password ? password : "",
+  //   // );
+  //
+  //   // if (profileUpdateResponse.result == false) {
+  //   //   ToastComponent.showDialog(profileUpdateResponse.message, context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   // } else {
+  //   //   ToastComponent.showDialog(profileUpdateResponse.message, context,
+  //   //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+  //   //
+  //   //   user_name.value = name;
+  //   //   setState(() {});
+  //   // }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -176,10 +202,10 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      toolbarHeight: 180,
+      toolbarHeight: 200,
      // backgroundColor:  Color(0xff6b0772),
       flexibleSpace: Container(
-        height: 220,
+        height: 200,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -299,8 +325,8 @@ class _ProfileEditState extends State<ProfileEdit> {
               child:  Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
-                  height: 100,
-                  width: 100,
+                  height: 80,
+                  width: 80,
                   decoration: BoxDecoration(
                     borderRadius:
                     BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
@@ -339,7 +365,7 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   buildBody(context) {
     ///changed
-    if (is_logged_in.value != false) {
+    if (is_logged_in.value == false) {
       return Container(
           height: 100,
           child: Center(
@@ -396,7 +422,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Container(
                 height: 40,
                 child: TextField(
-                 // controller: _nameController,
+                 controller: _dobController,
                   autofocus: false,
                   decoration: InputDecorations.buildInputDecoration_1(
                       hint_text: "Date of Birth"),
@@ -472,6 +498,8 @@ class _ProfileEditState extends State<ProfileEdit> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
+
+
                 Radio(
                   activeColor:Color(0xff6b0772),
                   value: 2,
@@ -482,31 +510,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                   onTap: () {
                     setState(() {
                       _radioValue1 = 2;
-                    });
-                  },
-                  child: Text(
-                    "Transgender",
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                        //height: 1.6,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-                Radio(
-                  activeColor:Color(0xff6b0772),
-                  value: 3,
-                  groupValue: _radioValue1,
-                  onChanged: _handleRadioValueChange1,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _radioValue1 = 3;
                     });
                   },
                   child: Text(
@@ -543,7 +546,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Container(
                 height: 40,
                 child: TextField(
-                 // controller: _nameController,
+                  controller: _phoneController,
                   autofocus: false,
                   decoration: InputDecorations.buildInputDecoration_1(
                       hint_text: "Mobile Number"),
@@ -555,7 +558,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Container(
                 height: 40,
                 child: TextField(
-                  //controller: _nameController,
+                  controller: _addressController,
                   autofocus: false,
                   decoration: InputDecorations.buildInputDecoration_1(
                       hint_text: "Address"),

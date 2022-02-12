@@ -7,6 +7,8 @@ import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/ConsultationHistory.dart';
 import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
 import 'package:active_ecommerce_flutter/AppointmentHistory1.dart';
+import 'package:active_ecommerce_flutter/XDlogin_page.dart';
+//import 'package:toast/toast.dart';
 
 class MainDrawer extends StatefulWidget {
   const MainDrawer({
@@ -18,23 +20,26 @@ class MainDrawer extends StatefulWidget {
 }
 
 class _MainDrawerState extends State<MainDrawer> {
+
   onTapLogout(context) async {
     user_id.value = null;
     AuthHelper().clearUserData();
 
-    /*
-    var logoutResponse = await AuthRepository()
-            .getLogoutResponse();
-
-
-    if(logoutResponse.result == true){
-         ToastComponent.showDialog(logoutResponse.message, context,
-                   gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-         }
-         */
-    // Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //   return Login();
-    // }));
+    // /*
+    // var logoutResponse = await AuthRepository()
+    //         .getLogoutResponse();
+    //
+    //
+    // if(logoutResponse.result == true){
+    //
+    //      }
+    //      */
+    // ToastComponent.showDialog(logoutResponse.message, context,
+    //     gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+    //
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return Loginpage();
+    }));
   }
 
   @override
@@ -107,7 +112,7 @@ class _MainDrawerState extends State<MainDrawer> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Jaan Francis',
+                  user_name.value.toString(),
                   style: TextStyle(
                     fontFamily: 'Arial',
                     fontSize: 16,
@@ -123,7 +128,7 @@ class _MainDrawerState extends State<MainDrawer> {
                   Padding(
                     padding: const EdgeInsets.all(0.0),
                     child: Text(
-                      '(+91)- 9446689805',
+                      '(+91) '+user_phone.value.toString(),
                       style: TextStyle(
                         fontFamily: 'Arial',
                         fontSize: 16,

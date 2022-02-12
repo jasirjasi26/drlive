@@ -4,18 +4,62 @@ import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
 import 'package:active_ecommerce_flutter/XDlogin_page.dart';
+import 'package:http/http.dart' as http;
+import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
+import 'dart:async';
+import 'dart:convert';
 
 class Signuppage extends StatelessWidget {
-  Signuppage({
-    Key key,
-  }) : super(key: key);
+  var uname = TextEditingController();
+  var pass = TextEditingController();
+  var cpass = TextEditingController();
+  var phone = TextEditingController();
+
+  authenticateUser(String username, String number, String password) async {
+    try {
+      final response = await http.post('${AppConfig.BASE_URL}register', body: {
+        'name': username,
+        'type': "mobile",
+        'password': password,
+        'email_or_phone': number,
+        'gender': "male",
+        'dob': "2000-10-12"
+      });
+
+      switch (response.statusCode) {
+        case 200:
+          print(response.body);
+          final values = json.decode(response.body);
+          AuthHelper().setUserData(values,username,password);
+          PageLinkInfo(
+            ease: Curves.easeOut,
+            duration: 1.0,
+            pageBuilder: () => BottomBar(),
+          );
+
+          break;
+        case 404:
+          print("Something went wrong");
+          // _apiResponse.ApiError = ApiError.fromJson(json.decode(response.body));
+          break;
+        default:
+          print("Something ");
+          //_apiResponse.ApiError = ApiError.fromJson(json.decode(response.body));
+          break;
+      }
+    } on Exception {
+      print("Error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       //backgroundColor: const Color(0xffaf1281),
       body: Container(
         height: MediaQuery.of(context).size.height,
-        width:MediaQuery.of(context).size.width ,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           // borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
           gradient: LinearGradient(
@@ -26,7 +70,7 @@ class Signuppage extends StatelessWidget {
           ),
         ),
         child: Stack(
-          children: <Widget>[
+          children: [
             Pinned.fromPins(
               Pin(start: 0.0, end: 0.0),
               Pin(start: 0.0, end: -7.0),
@@ -55,186 +99,344 @@ class Signuppage extends StatelessWidget {
                 ],
               ),
             ),
-            Pinned.fromPins(
-              Pin(size: 268.0, start: 33.0),
-              Pin(size: 37.0, middle: 0.2905),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                 color: const Color(0xffffffff),
-                  border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xfff6d3eb),
-                      offset: Offset(6, 3),
-                      blurRadius: 6,
+            Padding(
+              padding: const EdgeInsets.only(left: 50.0, right: 50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Sign Up',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 30,
+                      color: const Color(0xff6b0772),
+                      fontWeight: FontWeight.w700,
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 268.0, start: 33.0),
-              Pin(size: 37.0, middle: 0.3624),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: const Color(0xfff6d3eb),
-                  border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xfff6d3eb),
-                      offset: Offset(6, 3),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 66.0, start: 43.0),
-              Pin(size: 17.0, middle: 0.3661),
-              child: Text(
-                'Password',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 15,
-                  color: const Color(0xff858585),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 125.0, middle: 0.3957),
-              Pin(size: 37.0, middle: 0.5546),
-              child: PageLink(
-                links: [
-                  PageLinkInfo(
-                    ease: Curves.easeOut,
-                    duration: 1.0,
-                    pageBuilder: () => BottomBar(),
+                    textAlign: TextAlign.center,
                   ),
-                ],
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: const Color(0xff6b0772),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x29000000),
-                        offset: Offset(6, 3),
-                        blurRadius: 6,
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xffffffff),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xfff6d3eb)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6d3eb),
+                          offset: Offset(6, 3),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                        obscureText: false,
+                        controller: uname,
+                        decoration: InputDecoration(
+                          hintText: 'Name',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 15,
+                            color: const Color(0xff858585),
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, bottom: 15, top: 15, right: 15),
+                          filled: false,
+                          isDense: false,
+                        )),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xffffffff),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xfff6d3eb)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6d3eb),
+                          offset: Offset(6, 3),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                        obscureText: false,
+                        controller: phone,
+                        decoration: InputDecoration(
+                          hintText: 'Phone Number',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 15,
+                            color: const Color(0xff858585),
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, bottom: 15, top: 15, right: 15),
+                          filled: false,
+                          isDense: false,
+                        )),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xffffffff),
+                      border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6d3eb),
+                          offset: Offset(6, 3),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding:EdgeInsets.only(
+                          left: 15, bottom: 15, top: 10, right: 15),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Date of Birth',
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 15,
+                              color: const Color(0xff858585),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Gender',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 15,
+                          color: const Color(0xff858585),
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 174.0, middle: 0.3656),
-              Pin(size: 17.0, middle: 0.6272),
-              child: Text(
-                'Already have an account?',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 15,
-                  color: const Color(0xff000000),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 36.0, middle: 0.4074),
-              Pin(size: 17.0, middle: 0.6676),
-              child:PageLink(
-                links: [
-                  PageLinkInfo(
-                    ease: Curves.easeOut,
-                    duration: 1.0,
-                    pageBuilder: () => Loginpage(),
+                  Row(
+                    children: [
+                      SizedBox(width: 15,),
+                      Container(
+                        height: 15,
+                        width: 15,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                          color: const Color(0xffffffff),
+                          border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                        ),
+                      ),
+                      Text(
+                        '  Male',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          color: const Color(0xff858585),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(width: 15,),
+                      Container(
+                        height: 15,
+                        width: 15,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                          color: const Color(0xffffffff),
+                          border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                        ),
+                      ),
+
+                      Text(
+                        '   FeMale',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          color: const Color(0xff858585),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(width: 15,),
+                      Container(
+                        height: 15,
+                        width: 15,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                          color: const Color(0xffffffff),
+                          border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                        ),
+                      ),
+                      Text(
+                        '  Other',
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 10,
+                          color: const Color(0xff858585),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xfff6d3eb),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xfff6d3eb)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6d3eb),
+                          offset: Offset(6, 3),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                        obscureText: true,
+                        controller: pass,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 15,
+                            color: const Color(0xff858585),
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, bottom: 15, top: 15, right: 15),
+                          filled: false,
+                          isDense: false,
+                        )),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xfff6d3eb),
+                      border: Border.all(
+                          width: 1.0, color: const Color(0xfff6d3eb)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6d3eb),
+                          offset: Offset(6, 3),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: TextFormField(
+                        obscureText: false,
+                        controller: cpass,
+                        decoration: InputDecoration(
+                          hintText: 'Confirm Password',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 15,
+                            color: const Color(0xff858585),
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, bottom: 15, top: 15, right: 15),
+                          filled: false,
+                          isDense: false,
+                        )),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (uname.text.isNotEmpty &&
+                          pass.text.isNotEmpty &&
+                          phone.text.isNotEmpty &&
+                          cpass.text == pass.text) {
+                        authenticateUser(uname.text, phone.text, pass.text);
+                      } else {
+                        print("Enter values");
+                      }
+                    },
+                    child: Container(
+                      width: 120,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: const Color(0xff6b0772),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0x29000000),
+                            offset: Offset(6, 3),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 16,
+                            color: const Color(0xfff6b2e1),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    'Already have an account?',
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 15,
+                      color: const Color(0xff000000),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  PageLink(
+                    links: [
+                      PageLinkInfo(
+                        ease: Curves.easeOut,
+                        duration: 1.0,
+                        pageBuilder: () => Loginpage(),
+                      ),
+                    ],
+                    child: Text(
+                      'Log In',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 15,
+                        color: const Color(0xff6b0772),
+                        decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
-                child:  Text(
-                  'Log In',
-                  style: TextStyle(
-                    fontFamily: 'Arial',
-                    fontSize: 15,
-                    color: const Color(0xff6b0772),
-                    decoration: TextDecoration.underline,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 268.0, start: 33.0),
-              Pin(size: 37.0, middle: 0.4412),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: const Color(0xfff6d3eb),
-                  border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xfff6d3eb),
-                      offset: Offset(6, 3),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 120.0, start: 38.0),
-              Pin(size: 17.0, middle: 0.4427),
-              child: Text(
-                'Confirm Password',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 15,
-                  color: const Color(0xff858585),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 40.0, start: 43.0),
-              Pin(size: 17.0, middle: 0.2988),
-              child: Text(
-                'Name',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 15,
-                  color: const Color(0xff858585),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 114.0, middle: 0.4024),
-              Pin(size: 33.0, middle: 0.1926),
-              child: Text(
-                'Sign Up',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 30,
-                  color: const Color(0xff6b0772),
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Pinned.fromPins(
-              Pin(size: 54.0, middle: 0.4052),
-              Pin(size: 17.0, middle: 0.5532),
-              child: Text(
-                'Sign Up',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 15,
-                  color: const Color(0xfff6b2e1),
-                ),
-                textAlign: TextAlign.center,
               ),
             ),
           ],

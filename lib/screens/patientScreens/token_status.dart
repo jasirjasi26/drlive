@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
-import 'package:active_ecommerce_flutter/repositories/category_repository.dart';
 import 'package:shimmer/shimmer.dart';
 
 class TokenList extends StatefulWidget {

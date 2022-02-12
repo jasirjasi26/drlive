@@ -10,16 +10,15 @@ class AppConfig {
   static const bool HTTPS = false;
 
   //configure this
-  static const DOMAIN_PATH = "lampros.optimisttechhub.com";
-  //static const DOMAIN_PATH = "demo.activeitzone.com/ecommerce_flutter_demo";
-  //static const DOMAIN_PATH = "adbuild.ae";
+  static const DOMAIN_PATH = "drlive.optimisttechhub.com";
 
   //do not configure these below
-  static const String API_ENDPATH = "api/v2";
+  static const String API_ENDPATH = "api/";
   static const String PUBLIC_FOLDER = "public";
-  static const String PROTOCOL = HTTPS ? "https://" : "http://";
+  static const String PROTOCOL = HTTPS ? "https://" : "https://";
   static const String RAW_BASE_URL = "${PROTOCOL}${DOMAIN_PATH}";
   static const String BASE_URL = "${RAW_BASE_URL}/${API_ENDPATH}";
+  static const String IMAGE_URL ="https://drlive.optimisttechhub.com/storage/user/";
 
   //configure this if you are using amazon s3 like services
   //give direct link to file like https://[[bucketname]].s3.ap-southeast-1.amazonaws.com/

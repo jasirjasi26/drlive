@@ -4,8 +4,6 @@ import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
 import 'package:toast/toast.dart';
-import 'package:active_ecommerce_flutter/custom/input_decorations.dart';
-import 'package:active_ecommerce_flutter/repositories/profile_repositories.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -76,23 +74,23 @@ class DoctorProfileState extends State<DoctorProfile> {
       String base64Image = base64Encode(_file.readAsBytesSync());
       String fileName = _file.path.split("/").last;
 
-      var profileImageUpdateResponse =
-          await ProfileRepository().getProfileImageUpdateResponse(
-        base64Image,
-        fileName,
-      );
-
-      if (profileImageUpdateResponse.result == false) {
-        ToastComponent.showDialog(profileImageUpdateResponse.message, context,
-            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-        return;
-      } else {
-        ToastComponent.showDialog(profileImageUpdateResponse.message, context,
-            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-
-        avatar_original.value = profileImageUpdateResponse.path;
-        setState(() {});
-      }
+      // var profileImageUpdateResponse =
+      //     await ProfileRepository().getProfileImageUpdateResponse(
+      //   base64Image,
+      //   fileName,
+      // );
+      //
+      // if (profileImageUpdateResponse.result == false) {
+      //   ToastComponent.showDialog(profileImageUpdateResponse.message, context,
+      //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      //   return;
+      // } else {
+      //   ToastComponent.showDialog(profileImageUpdateResponse.message, context,
+      //       gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      //
+      //   avatar_original.value = profileImageUpdateResponse.path;
+      //   setState(() {});
+      // }
     }
   }
 

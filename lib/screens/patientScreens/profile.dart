@@ -4,7 +4,6 @@ import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/profile_edit.dart';
-import 'package:active_ecommerce_flutter/repositories/profile_repositories.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key key, this.show_back_button = false}) : super(key: key);
@@ -56,21 +55,21 @@ class _ProfileState extends State<Profile> {
   }
 
   fetchCounters() async {
-    var profileCountersResponse =
-        await ProfileRepository().getProfileCountersResponse();
-
-    _cartCounter = profileCountersResponse.cart_item_count;
-    _wishlistCounter = profileCountersResponse.wishlist_item_count;
-    _orderCounter = profileCountersResponse.order_count;
-
-    _cartCounterString =
-        counterText(_cartCounter.toString(), default_length: 2);
-    _wishlistCounterString =
-        counterText(_wishlistCounter.toString(), default_length: 2);
-    _orderCounterString =
-        counterText(_orderCounter.toString(), default_length: 2);
-
-    setState(() {});
+    // var profileCountersResponse =
+    //     await ProfileRepository().getProfileCountersResponse();
+    //
+    // _cartCounter = profileCountersResponse.cart_item_count;
+    // _wishlistCounter = profileCountersResponse.wishlist_item_count;
+    // _orderCounter = profileCountersResponse.order_count;
+    //
+    // _cartCounterString =
+    //     counterText(_cartCounter.toString(), default_length: 2);
+    // _wishlistCounterString =
+    //     counterText(_wishlistCounter.toString(), default_length: 2);
+    // _orderCounterString =
+    //     counterText(_orderCounter.toString(), default_length: 2);
+    //
+    // setState(() {});
   }
 
   String counterText(String txt, {default_length = 3}) {
