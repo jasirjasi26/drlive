@@ -24,19 +24,6 @@ class _MainDrawerState extends State<MainDrawer> {
   onTapLogout(context) async {
     user_id.value = null;
     AuthHelper().clearUserData();
-
-    // /*
-    // var logoutResponse = await AuthRepository()
-    //         .getLogoutResponse();
-    //
-    //
-    // if(logoutResponse.result == true){
-    //
-    //      }
-    //      */
-    // ToastComponent.showDialog(logoutResponse.message, context,
-    //     gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
-    //
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return Loginpage();
     }));

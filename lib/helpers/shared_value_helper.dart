@@ -68,3 +68,9 @@ final SharedValue<String> user_gender = SharedValue(
   key: "user_gender", // disk storage key for shared_preferences
   autosave: true, // autosave to shared prefs when value changes
 );
+
+final SharedValue<String> user_blood = SharedValue(
+  value: "", // initial value
+  key: "user_blood", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);

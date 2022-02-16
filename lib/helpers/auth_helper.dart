@@ -11,6 +11,8 @@ class AuthHelper {
       user_phone.value = response['user']['phone'];
       user_address.value = response['user']['address'] !=null ? response['user']['address'] :'';
       user_dob.value = response['user']['dob'];
+      user_email.value = response['user']['email'];
+      user_blood.value = response['user']['blood_group'];
       user_gender.value = response['user']['gender'];
       access_token.value = response['token'];
     }
@@ -25,5 +27,6 @@ class AuthHelper {
       user_name.value = "";
       user_email.value = "";
       user_phone.value = "";
+      access_token.value = "";
   }
 }

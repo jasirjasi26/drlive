@@ -4,12 +4,11 @@ import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
 import 'package:active_ecommerce_flutter/XDsignuppage.dart';
-import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
+import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
-
+import 'package:flutter_flexible_toast/flutter_flexible_toast.dart';
 
 class Loginpage extends StatefulWidget {
-
   @override
   LoginpageState createState() => LoginpageState();
 }
@@ -18,23 +17,45 @@ class LoginpageState extends State<Loginpage> {
   var passw = TextEditingController();
   var phone = TextEditingController();
 
-
-  login(){
-    DoctorsData().authenticateUser(phone.text, passw.text).then((value) => {
-      if(value){
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (BuildContext context) => BottomBar())),
-      }else{
-        print("No user"),
-      }
-    });
+  login() {
+    UserData().authenticateUser(phone.text, passw.text).then((value) => {
+          if (value)
+            {
+              FlutterFlexibleToast.showToast(
+                  message: " Login Success",
+                  toastLength: Toast.LENGTH_LONG,
+                  toastGravity: ToastGravity.BOTTOM,
+                  icon: ICON.SUCCESS,
+                  radius: 15,
+                  elevation: 5,
+                  imageSize: 20,
+                  textColor: Colors.white,
+                  backgroundColor: Color(0xff6b0772),
+                  timeInSeconds: 3),
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (BuildContext context) => BottomBar())),
+            }
+          else
+            {
+              FlutterFlexibleToast.showToast(
+                  message: " No user found",
+                  toastLength: Toast.LENGTH_LONG,
+                  toastGravity: ToastGravity.BOTTOM,
+                  icon: ICON.ERROR,
+                  radius: 15,
+                  elevation: 5,
+                  imageSize: 20,
+                  textColor: Colors.white,
+                  backgroundColor: Color(0xff6b0772),
+                  timeInSeconds: 3)
+            }
+        });
   }
 
   @override
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +132,47 @@ class LoginpageState extends State<Loginpage> {
                       ],
                       child: GestureDetector(
                         onTap: () {
+
+                          if(phone.text.isEmpty){
+                            FlutterFlexibleToast.showToast(
+                                message: " Please enter Phone number",
+                                toastLength: Toast.LENGTH_LONG,
+                                toastGravity: ToastGravity.BOTTOM,
+                                icon: ICON.ERROR,
+                                radius: 15,
+                                elevation: 5,
+                                imageSize: 20,
+                                textColor: Colors.white,
+                                backgroundColor: Color(0xff6b0772),
+                                timeInSeconds: 3);
+                          }
+                          if(passw.text.isEmpty){
+                            FlutterFlexibleToast.showToast(
+                                message: " Please enter password",
+                                toastLength: Toast.LENGTH_LONG,
+                                toastGravity: ToastGravity.BOTTOM,
+                                icon: ICON.ERROR,
+                                radius: 15,
+                                elevation: 5,
+                                imageSize: 20,
+                                textColor: Colors.white,
+                                backgroundColor: Color(0xff6b0772),
+                                timeInSeconds: 3);
+                          }
                           if (passw.text.isNotEmpty && phone.text.isNotEmpty) {
-                           login();
+                            login();
                           } else {
+                            FlutterFlexibleToast.showToast(
+                                message: " Please enter values",
+                                toastLength: Toast.LENGTH_LONG,
+                                toastGravity: ToastGravity.BOTTOM,
+                                icon: ICON.ERROR,
+                                radius: 15,
+                                elevation: 5,
+                                imageSize: 20,
+                                textColor: Colors.white,
+                                backgroundColor: Color(0xff6b0772),
+                                timeInSeconds: 3);
                             print("Enter values");
                             print(username.value);
                           }

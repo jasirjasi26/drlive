@@ -10,7 +10,7 @@ import 'package:active_ecommerce_flutter/doctors_data/doctor_list.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'dart:async';
 import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
-
+import 'package:active_ecommerce_flutter/screens/patientScreens/meeting_screen.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
 
 class Home extends StatefulWidget {
@@ -963,7 +963,12 @@ class _HomeState extends State<Home> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return VideoCall(
+                  );
+                }));
+              },
               child: Container(
                 height: 80,
                 width: MediaQuery.of(context).size.width / 5 - 4,

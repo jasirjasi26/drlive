@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
-import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:custom_horizontal_calendar/custom_horizontal_calendar.dart';
 import 'package:custom_horizontal_calendar/date_row.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,12 +29,16 @@ class DoctorScreen extends StatefulWidget {
 class DoctorScreenState extends State<DoctorScreen> {
   Future<Doctors> futureAlbum;
   DateTime chosen=DateTime.now();
+  String selected="Call";
+  List<String> _locations = ['Call', 'Chat', 'C', 'D']; // Option 2
+  String _selectedLocation;
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     futureAlbum = DoctorsData().fetchAlbum();
+    print(widget.id);
   }
 
   @override
@@ -535,7 +537,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 child: Text(
-                                  snapshot.data.doctors[i].details,
+                                  snapshot.data.doctors[i].details.replaceAll("</p>", "").replaceAll("<p>", ""),
                                   style: TextStyle(
                                     fontFamily: 'Arial',
                                     fontSize: 14,
@@ -842,9 +844,12 @@ class DoctorScreenState extends State<DoctorScreen> {
                                               return DropdownMenuItem<String>(
                                                 value: value,
                                                 onTap: (){
-
+                                                  setState(() {
+                                                    selected=value;
+                                                  });
+                                                  print(selected);
                                                 },
-                                                child: Text(value),
+                                                child: Text(selected),
                                               );
                                             }).toList(),
                                             onChanged: (_) {

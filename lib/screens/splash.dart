@@ -3,13 +3,11 @@ import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'dart:async';
-import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
-import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
-import 'package:active_ecommerce_flutter/screens/doctorScreens/doctor_home.dart';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
 import 'package:active_ecommerce_flutter/XDlogin_page.dart';
 
+import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -25,7 +23,7 @@ class _SplashState extends State<Splash> {
   );
 
  Future<String> fetchUser(){
-      DoctorsData().authenticateUser("8129902900", "password").then((value) => {
+      UserData().authenticateUser("8129902900", "password").then((value) => {
         if(value){
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (BuildContext context) => BottomBar())),
@@ -69,14 +67,11 @@ class _SplashState extends State<Splash> {
       body: Stack(
         children: [
           CustomSplashScreen(
-            gradientBackground: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-               // Colors.cyan,
-                Colors.cyanAccent,
-                Colors.white
-              ],
+            gradientBackground:  LinearGradient(
+              begin: Alignment(-0.98, 0.31),
+              end: Alignment(-0.46, -0.49),
+              colors: [const Color(0xffaf1281), const Color(0xff6b0772)],
+              stops: [0.0, 1.0],
             ),
             //comment this
             seconds: 3,
@@ -90,11 +85,11 @@ class _SplashState extends State<Splash> {
 
 
             navigateAfterFuture: fetchUser(), //uncomment this
-            title: Text(
-              "Doctor Live " + _packageInfo.version,
-              style: TextStyle(
-                  fontWeight: FontWeight.w900, fontSize: 30.0, color: Colors.black),
-            ),
+            // title: Text(
+            //   "Doctor Live " + _packageInfo.version,
+            //   style: TextStyle(
+            //       fontWeight: FontWeight.w900, fontSize: 30.0, color: Colors.black),
+            // ),
             // //loaderColor: Colors.red,
             // useLoader: false,
             // loadingText: Text(
@@ -105,7 +100,7 @@ class _SplashState extends State<Splash> {
             //     color: Colors.red,
             //   ),
             // ),
-            image: Image.asset("assets/splash_icon.png", height: 75,width: 125,),
+            image: Image.asset("assets/splash_icon.png", height: 150,width: 150,),
 
             ///new changes
             // backgroundImage:
@@ -378,7 +373,7 @@ class _CustomSplashScreenState extends State<CustomSplashScreen> {
                           //     radius: widget.photoSize,
                           //   ),
                           // ),
-                          Image.asset("assets/Doctor Live.png", height: 60,width: 180,),
+                          //Image.asset("assets/Doctor Live.png", height: 60,width: 180,),
 
                           //widget.title,
                           // Padding(

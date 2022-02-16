@@ -391,6 +391,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.0"
+  flutter_flexible_toast:
+    dependency: "direct main"
+    description:
+      name: flutter_flexible_toast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   flutter_html:
     dependency: "direct main"
     description:
@@ -534,6 +541,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.4"
+  jitsi_meet:
+    dependency: "direct main"
+    description:
+      name: jitsi_meet
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   js:
     dependency: transitive
     description:

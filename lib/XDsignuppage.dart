@@ -5,10 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
 import 'package:active_ecommerce_flutter/XDlogin_page.dart';
 import 'package:http/http.dart' as http;
-import 'package:active_ecommerce_flutter/app_config.dart';
-import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
-import 'dart:async';
-import 'dart:convert';
+import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 
 class Signuppage extends StatelessWidget {
   var uname = TextEditingController();
@@ -16,42 +13,6 @@ class Signuppage extends StatelessWidget {
   var cpass = TextEditingController();
   var phone = TextEditingController();
 
-  authenticateUser(String username, String number, String password) async {
-    try {
-      final response = await http.post('${AppConfig.BASE_URL}register', body: {
-        'name': username,
-        'type': "mobile",
-        'password': password,
-        'email_or_phone': number,
-        'gender': "male",
-        'dob': "2000-10-12"
-      });
-
-      switch (response.statusCode) {
-        case 200:
-          print(response.body);
-          final values = json.decode(response.body);
-          AuthHelper().setUserData(values,username,password);
-          PageLinkInfo(
-            ease: Curves.easeOut,
-            duration: 1.0,
-            pageBuilder: () => BottomBar(),
-          );
-
-          break;
-        case 404:
-          print("Something went wrong");
-          // _apiResponse.ApiError = ApiError.fromJson(json.decode(response.body));
-          break;
-        default:
-          print("Something ");
-          //_apiResponse.ApiError = ApiError.fromJson(json.decode(response.body));
-          break;
-      }
-    } on Exception {
-      print("Error");
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -373,7 +334,7 @@ class Signuppage extends StatelessWidget {
                           pass.text.isNotEmpty &&
                           phone.text.isNotEmpty &&
                           cpass.text == pass.text) {
-                        authenticateUser(uname.text, phone.text, pass.text);
+                        UserData().register(uname.text, phone.text, pass.text);
                       } else {
                         print("Enter values");
                       }

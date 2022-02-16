@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 
 class ProfileEdit extends StatefulWidget {
   ProfileEdit(
@@ -32,6 +33,11 @@ class _ProfileEditState extends State<ProfileEdit> {
   TextEditingController(text: "${user_dob.value}");
   TextEditingController _addressController =
   TextEditingController(text: "${user_address.value}");
+  TextEditingController _bloodController =
+  TextEditingController(text: "${user_blood.value}");
+  TextEditingController _emailController =
+  TextEditingController(text: "${user_email.value}");
+
   int _radioValue1 = 0;
 
   getGender(){
@@ -435,7 +441,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Container(
                 height: 40,
                 child: TextField(
-                  // controller: _nameController,
+                  controller: _bloodController,
                   autofocus: false,
                   decoration: InputDecorations.buildInputDecoration_1(
                       hint_text: "Blood Group"),
@@ -534,7 +540,7 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Container(
                 height: 40,
                 child: TextField(
-                  //controller: _nameController,
+                  controller: _emailController,
                   autofocus: false,
                   decoration: InputDecorations.buildInputDecoration_1(
                       hint_text: "E mail Address"),
@@ -640,30 +646,35 @@ class _ProfileEditState extends State<ProfileEdit> {
               child: Row(
                 children: [
                   Spacer(),
-                  Container(
-                    width: 100,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: const Color(0xff6b0772),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xfff6b2e1),
-                          offset: Offset(6, 3),
-                          blurRadius: 12,
+                  GestureDetector(
+                    onTap: (){
+                      UserData().updateProfile(_nameController.text.toString(),_bloodController.text.toString() , _emailController.text.toString());
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: const Color(0xff6b0772),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xfff6b2e1),
+                            offset: Offset(6, 3),
+                            blurRadius: 12,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 20,
+                            color: const Color(0xffffffff),
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 20,
-                          color: const Color(0xffffffff),
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.left,
                       ),
                     ),
                   ),
@@ -699,64 +710,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                 ],
               ),
             ),
-
-            // Padding(
-            //   padding: const EdgeInsets.only(bottom: 4.0),
-            //   child: Text(
-            //     "Password",
-            //     style: TextStyle(
-            //         color: MyTheme.accent_color, fontWeight: FontWeight.w600),
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.only(bottom: 8.0),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.end,
-            //     children: [
-            //       Container(
-            //         height: 36,
-            //         child: TextField(
-            //           controller: _passwordController,
-            //           autofocus: false,
-            //           obscureText: true,
-            //           enableSuggestions: false,
-            //           autocorrect: false,
-            //           decoration: InputDecorations.buildInputDecoration_1(
-            //               hint_text: "• • • • • • • •"),
-            //         ),
-            //       ),
-            //       Text(
-            //         "Password must be at least 6 character",
-            //         style: TextStyle(
-            //             color: MyTheme.textfield_grey,
-            //             fontStyle: FontStyle.italic),
-            //       )
-            //     ],
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.only(bottom: 4.0),
-            //   child: Text(
-            //     "Retype Password",
-            //     style: TextStyle(
-            //         color: MyTheme.accent_color, fontWeight: FontWeight.w600),
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.only(bottom: 8.0),
-            //   child: Container(
-            //     height: 36,
-            //     child: TextField(
-            //       controller: _passwordConfirmController,
-            //       autofocus: false,
-            //       obscureText: true,
-            //       enableSuggestions: false,
-            //       autocorrect: false,
-            //       decoration: InputDecorations.buildInputDecoration_1(
-            //           hint_text: "• • • • • • • •"),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
