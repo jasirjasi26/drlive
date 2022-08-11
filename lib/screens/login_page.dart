@@ -1,9 +1,10 @@
+import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation_doctor.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
-import 'package:active_ecommerce_flutter/XDsignuppage.dart';
+import 'package:active_ecommerce_flutter/screens/signuppage.dart';
 import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter_flexible_toast/flutter_flexible_toast.dart';
@@ -32,8 +33,15 @@ class LoginpageState extends State<Loginpage> {
                   textColor: Colors.white,
                   backgroundColor: Color(0xff6b0772),
                   timeInSeconds: 3),
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => BottomBar())),
+              if(role.value=="patient"){
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (BuildContext context) => BottomBar())),
+              }
+              else{
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (BuildContext context) => BottomBar2())),
+              }
+
             }
           else
             {

@@ -1,4 +1,4 @@
-import 'package:active_ecommerce_flutter/doctors_data/doctor_list.dart';
+import 'package:active_ecommerce_flutter/models/doctor_list.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -37,15 +37,15 @@ class UserData{
     }
   }
 
-  register(String username, String number, String password) async {
+  Future<bool> register(String username, String number, String password, String dob,String gender) async {
     try {
       final response = await http.post('${AppConfig.BASE_URL}register', body: {
         'name': username,
         'type': "mobile",
         'password': password,
         'email_or_phone': number,
-        'gender': "male",
-        'dob': "2000-10-12"
+        'gender': gender,
+        'dob': dob
       });
 
       switch (response.statusCode) {
@@ -64,6 +64,7 @@ class UserData{
               timeInSeconds: 3);
           final values = json.decode(response.body);
           AuthHelper().setUserData(values,username,password);
+          return true;
           break;
         case 404:
           FlutterFlexibleToast.showToast(
@@ -78,6 +79,7 @@ class UserData{
               backgroundColor: Color(0xff6b0772),
               timeInSeconds: 3);
           print("Something went wrong");
+          return false;
           // _apiResponse.ApiError = ApiError.fromJson(json.decode(response.body));
           break;
         default:
@@ -93,6 +95,7 @@ class UserData{
               backgroundColor: Color(0xff6b0772),
               timeInSeconds: 3);
           print("Something ");
+          return false;
           //_apiResponse.ApiError = ApiError.fromJson(json.decode(response.body));
           break;
       }

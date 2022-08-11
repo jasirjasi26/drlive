@@ -6,9 +6,8 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/ConsultationHistory.dart';
 import 'package:active_ecommerce_flutter/helpers/auth_helper.dart';
-import 'package:active_ecommerce_flutter/AppointmentHistory1.dart';
-import 'package:active_ecommerce_flutter/XDlogin_page.dart';
-//import 'package:toast/toast.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/AppointmentHistory1.dart';
+import 'package:active_ecommerce_flutter/screens/login_page.dart';
 
 class MainDrawer extends StatefulWidget {
   const MainDrawer({
@@ -99,7 +98,7 @@ class _MainDrawerState extends State<MainDrawer> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  user_name.value.toString(),
+                  user_name.value.toString().toUpperCase(),
                   style: TextStyle(
                     fontFamily: 'Arial',
                     fontSize: 16,
@@ -169,20 +168,6 @@ class _MainDrawerState extends State<MainDrawer> {
                 ],
               ),
               SizedBox(height: 10,),
-              // ListTile(
-              //         visualDensity:
-              //             VisualDensity(horizontal: -4, vertical: -4),
-              //         title: Text('My Profile',
-              //             style: TextStyle(color: Colors.black, fontSize: 18)),
-              //         onTap: () {
-              //           Navigator.push(context,
-              //               MaterialPageRoute(builder: (context) {
-              //             return Profile(show_back_button: true);
-              //           }));
-              //         }),
-               //   : Container(),
-              // is_logged_in.value == true
-              //     ?
               ListTile(
                       visualDensity:
                           VisualDensity(horizontal: -4, vertical: -4),
@@ -208,13 +193,9 @@ class _MainDrawerState extends State<MainDrawer> {
                       title: Text('Appoinment History',
                           style: TextStyle(color: Colors.white, fontSize: 18)),
                       onTap: () {
-                        // Navigator.push(
-                        //             context, MaterialPageRoute(builder: (context) {
-                        //           return OrderList(from_checkout:false);
-                        //         }));
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return AppointmentHistory1();
+                          return AppointmentHistory1(is_base_category: true,);
                         }));
                       }),
                 //  : Container(),

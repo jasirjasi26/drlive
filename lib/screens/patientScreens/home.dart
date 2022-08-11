@@ -6,12 +6,18 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/medicine_data.dart';
 import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
-import 'package:active_ecommerce_flutter/doctors_data/doctor_list.dart';
+import 'package:active_ecommerce_flutter/models/doctor_list.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'dart:async';
 import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
 import 'package:active_ecommerce_flutter/screens/patientScreens/meeting_screen.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation_doctor.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/meeting_screen.dart';
+import 'package:active_ecommerce_flutter/app_config.dart';
+import 'package:active_ecommerce_flutter/models/banners.dart';
+import 'package:active_ecommerce_flutter/data_handler/fetch_banner.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class Home extends StatefulWidget {
   Home({Key key, this.title, this.show_back_button = false}) : super(key: key);
@@ -26,12 +32,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Future<Doctors> futureAlbum;
-
+  Future<Banners> fetchBanner;
 
   @override
   void initState() {
     super.initState();
     futureAlbum = DoctorsData().fetchAlbum();
+    fetchBanner = BannerData().fetchBanners();
   }
 
   @override
@@ -62,7 +69,7 @@ class _HomeState extends State<Home> {
                       8.0,
                       0.0,
                     ),
-                    child: buildHomeMedicineRow(context),
+                    child: buildHomeStoryRow(context),
                   ),
                   Padding(
                     padding: EdgeInsets.all(8.0),
@@ -108,109 +115,60 @@ class _HomeState extends State<Home> {
               ),
               SliverList(
                 delegate: SliverChildListDelegate([
+
                   Padding(
-                    padding: EdgeInsets.all(15.0),
+                    padding: EdgeInsets.all(0.0),
                     child: Container(
                       height: 180,
-                      width: MediaQuery.of(context).size.width * 0.8,
+                      width: MediaQuery.of(context).size.width * 0.85,
                       decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: const Color(0xfff6b2e1),
-                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x29000000),
-                            offset: Offset(6, 3),
-                            blurRadius: 12,
-                          ),
-                        ],
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text(
-                                    'Do you have symptom\'s \nof Covid 19',
-                                    style: TextStyle(
-                                      fontFamily: 'Arial',
-                                      fontSize: 20,
-                                      color: const Color(0xff6b0772),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  )),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Container(
-                                  height: 40,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    color: const Color(0xff6b0772),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0x29000000),
-                                        offset: Offset(6, 3),
-                                        blurRadius: 6,
-                                      ),
-                                    ],
+                      child: FutureBuilder<Banners>(
+                          future: fetchBanner,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Container(
+                                height: 110,
+                                child: CarouselSlider.builder(
+                                  options: CarouselOptions(
+                                    height: 180.0,
+                                    enlargeCenterPage: true,
+                                    autoPlay: true,
+                                    aspectRatio: 16 / 9,
+                                    autoPlayCurve: Curves.fastOutSlowIn,
+                                    enableInfiniteScroll: true,
+                                    autoPlayAnimationDuration:
+                                    Duration(milliseconds: 800),
+                                    viewportFraction: 0.8,
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      'Contact a Doctor',
-                                      style: TextStyle(
-                                        fontFamily: 'Arial',
-                                        fontSize: 14,
-                                        color: const Color(0xffffffff),
-                                        fontWeight: FontWeight.w700,
+                                  itemCount: snapshot.data.banners.length,
+                                  itemBuilder:
+                                      (BuildContext context, int itemIndex) =>
+                                      Container(
+                                        margin: EdgeInsets.all(6.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(8.0),
+                                          image: DecorationImage(
+                                            image: NetworkImage(
+                                                '${AppConfig.BANNER_URL}' +
+                                                    snapshot
+                                                        .data.banners[itemIndex].image),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          // SizedBox(width: 20,),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  bottom: 0,
-                                  right: 20,
+                              );
+                            } else {
+                              return Center(
                                   child: Container(
-                                    width: 125,
-                                    child: SvgPicture.string(
-                                      '<svg viewBox="161.3 336.3 160.5 34.7" ><defs><filter id="shadow"><feDropShadow dx="6" dy="3" stdDeviation="12"/></filter></defs><path transform="translate(204.36, 292.02)" d="M 116.3001708984375 62.9971923828125 C 116.0435485839844 63.43125915527344 116.7617111206055 62.32703399658203 116.3001708984375 62.9971923828125 C 113.7101364135742 66.78029632568359 117.5730667114258 67.32494354248047 112.9324951171875 69.65087890625 C 94.53562164306641 78.87783813476562 56.06618881225586 78 47 78 C 26.3638801574707 78 -18.37515640258789 82.13109588623047 -36.11686706542969 72.86123657226562 C -40.35725784301758 70.64835357666016 -43.05078125 67.41270446777344 -43.05078125 62.9971923828125 C -43.05078125 41.45809173583984 132.96875 34.8033561706543 116.3001708984375 62.9971923828125 Z" fill="#6b0772" fill-opacity="0.36" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
-                                      allowDrawingOutsideViewBox: true,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 15,
-                                  bottom: 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(0.0),
-                                    child: Image.asset(
-                                      "assets/images/welcome.png",
-                                      height: 160,
-                                      width: 80,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                                      height: 40,
+                                      width: 40,
+                                      child: CircularProgressIndicator()));
+                            }
+                          }),
                     ),
                   ),
                   Padding(
@@ -659,7 +617,7 @@ class _HomeState extends State<Home> {
   ///Newly Added row................
   ///
 
-  buildHomeMedicineRow(BuildContext context) {
+  buildHomeStoryRow(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -1033,12 +991,7 @@ class _HomeState extends State<Home> {
             SizedBox(),
             GestureDetector(
               onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return DoctorsList(
-                //     //is_top_category: true,
-                //     parent_category_name: "Doctors Online",
-                //   );
-                // }));
+
               },
               child: Container(
                 height: 80,
@@ -1092,9 +1045,7 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return MedicineData();
-                // }));
+
               },
               child: Container(
                 height: 80,
@@ -1247,12 +1198,7 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return DoctorOnlineList(
-                //     is_top_category: true,
-                //     parent_category_name: "Doctors Online",
-                //   );
-                // }));
+
               },
               child: Container(
                 height: 80,
@@ -1315,12 +1261,9 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                //   return PrescriptionList(
-                //     is_top_category: true,
-                //     parent_category_name: "Prescription",
-                //   );
-                // }));
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return BottomBar2();
+                }));
               },
               child: Container(
                 height: 80,

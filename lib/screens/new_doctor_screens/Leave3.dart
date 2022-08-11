@@ -1,518 +1,545 @@
 import 'package:flutter/material.dart';
-import 'package:adobe_xd/pinned.dart';
-//import './Home2.dart';
-import 'package:adobe_xd/page_link.dart';
+import 'package:flutter_flexible_toast/flutter_flexible_toast.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
+import 'package:http/http.dart' as http;
+import 'package:active_ecommerce_flutter/app_config.dart';
+import 'dart:convert';
 
-class Leave3 extends StatelessWidget {
+class Leave3 extends StatefulWidget {
   Leave3({
     Key key,
+    this.is_base_category,
   }) : super(key: key);
+
+  final bool is_base_category;
+
+  @override
+  DoctorsListState createState() => DoctorsListState();
+}
+
+class DoctorsListState extends State<Leave3> {
+  String days = "0";
+  List<String> _locations = ['']; // Option 2
+  String _selectedLocation = "";
+  TextEditingController reason = TextEditingController();
+
+  String from = DateTime.now().year.toString() +
+      "-" +
+      DateTime.now().month.toString() +
+      "-" +
+      DateTime.now().day.toString();
+
+  String to = DateTime.now().year.toString() +
+      "-" +
+      DateTime.now().month.toString() +
+      "-" +
+      DateTime.now().day.toString();
+  DateTime chosen = DateTime.now();
+
+  Future<void> _selectDate() async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: chosen,
+        firstDate: DateTime(1900, 1),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != chosen)
+      setState(() {
+        chosen = picked;
+        from = chosen.year.toString() +
+            "-" +
+            chosen.month.toString() +
+            "-" +
+            chosen.day.toString();
+      });
+  }
+
+  Future<void> _selectToDate() async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: chosen,
+        firstDate: DateTime(1900, 1),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != chosen)
+      setState(() {
+        chosen = picked;
+        to = chosen.year.toString() +
+            "-" +
+            chosen.month.toString() +
+            "-" +
+            chosen.day.toString();
+      });
+  }
+
+  fetchTypes() async {
+    String token = access_token.value;
+    final response =
+        await http.get('${AppConfig.BASE_URL}leave/type', headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      for(int i=0;i<data['leave_types'].length;i++){
+        setState(() {
+
+          _locations.add(data['leave_types'][i]['Leavetype'].toString().toUpperCase());
+        });
+
+      }
+
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  applyLeave(String type, String rea, String from, String to) async {
+    String token = access_token.value;
+    Map data = {
+      'type': type,
+      'user_id': user_id.value,
+      'from_date': from,
+      'to_date': to,
+      'reason': rea
+    };
+    var body = json.encode(data);
+    final response = await http
+        .post('${AppConfig.BASE_URL}leave/register', body: body, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      FlutterFlexibleToast.showToast(
+          message: "Leave Applied",
+          toastLength: Toast.LENGTH_LONG,
+          toastGravity: ToastGravity.BOTTOM,
+          icon: ICON.SUCCESS,
+          radius: 15,
+          elevation: 5,
+          imageSize: 20,
+          textColor: Colors.white,
+          backgroundColor: Color(0xff6b0772),
+          timeInSeconds: 3);
+      Navigator.pop(context);
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  @override
+  void initState() {
+    fetchTypes();
+    super.initState();
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      toolbarHeight: 100,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(16.0),
+            bottomLeft: Radius.circular(16.0),
+          ),
+          gradient: LinearGradient(
+            begin: Alignment(0.0, -0.37),
+            end: Alignment(0.0, 1.0),
+            colors: [const Color(0xff6b0772), const Color(0xfff6b2e1)],
+            stops: [0.0, 1.0],
+          ),
+        ),
+      ),
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      title: Text(
+        'Leave Register',
+        style: TextStyle(
+          fontFamily: 'Arial',
+          fontSize: 24,
+          color: const Color(0xffffffff),
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.left,
+      ),
+      elevation: 0.0,
+      titleSpacing: 0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
-      body: Stack(
-        children: <Widget>[
-          Pinned.fromPins(
-            Pin(start: 0.0, end: 0.0),
-            Pin(size: 67.0, start: 0.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xff6b0772),
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(16.0),
-                  bottomLeft: Radius.circular(16.0),
+      appBar: buildAppBar(context),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Text(
+                  'Type of Leave',
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 12,
+                    color: const Color(0xff6b0772),
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          ),
+          Center(
+            child: Padding(
+              padding: EdgeInsets.only(left: 25.0, right: 25),
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: const Color(0xffffffff),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xffc2c2c2),
+                        offset: Offset(6, 3),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  height: 50,
+                  padding: EdgeInsets.only(left: 15.0, right: 15, top: 10),
+                  width: MediaQuery.of(context).size.width,
+                  child: DropdownButton<String>(
+                    hint: Text(_selectedLocation),
+                    value: _selectedLocation,
+                    isDense: true,
+                    isExpanded: true,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedLocation = newValue;
+                      });
+                      print(_selectedLocation);
+                    },
+                    items: _locations.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
           ),
-          Pinned.fromPins(
-            Pin(size: 181.7, start: 31.3),
-            Pin(size: 22.0, start: 29.0),
-            child: PageLink(
-              links: [
-                PageLinkInfo(
-                  ease: Curves.easeOut,
-                  duration: 0.3,
-                 // pageBuilder: () => Home2(),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Text(
+                  'Cause',
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 12,
+                    color: const Color(0xff6b0772),
+                  ),
+                  textAlign: TextAlign.left,
                 ),
               ],
-              child: Stack(
-                children: <Widget>[
-                  Pinned.fromPins(
-                    Pin(size: 16.2, start: 1.7),
-                    Pin(size: 19.7, start: 0.0),
-                    child: Transform.rotate(
-                      angle: 1.5708,
-                      child: Stack(
-                        children: <Widget>[
-                          SizedBox.expand(
-                              child: SvgPicture.string(
-                            _svg_u3zszc,
-                            allowDrawingOutsideViewBox: true,
-                            fit: BoxFit.fill,
-                          )),
-                        ],
-                      ),
-                    ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0, right: 25),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                color: const Color(0xffffffff),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xffc2c2c2),
+                    offset: Offset(6, 3),
+                    blurRadius: 12,
                   ),
-                  Pinned.fromPins(
-                    Pin(size: 143.0, end: 0.0),
-                    Pin(start: 0.0, end: 0.0),
-                    child: Text(
-                      'Leave Register',
+                ],
+              ),
+              child: TextFormField(
+                  obscureText: false,
+                  controller: reason,
+                  decoration: InputDecoration(
+                    hintText: '',
+                    hintStyle: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 15,
+                      color: const Color(0xff858585),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(
+                        left: 15, bottom: 15, top: 15, right: 15),
+                    filled: false,
+                    isDense: false,
+                  )),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Spacer(),
+                Text(
+                  'From',
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 12,
+                    color: const Color(0xff6b0772),
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                Spacer(),
+                Spacer(),
+                Spacer(),
+                Text(
+                  'To',
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 12,
+                    color: const Color(0xff6b0772),
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+                Spacer(),
+                Spacer(),
+              ],
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Spacer(),
+              GestureDetector(
+                onTap: _selectDate,
+                child: Container(
+                  width: 140,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Color(0xffffffff),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xffc2c2c2),
+                        offset: Offset(6, 3),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        from,
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 12,
+                          color: const Color(0xff6b0772),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      Spacer(),
+                      SvgPicture.string(
+                        _svg_bop1i,
+                        allowDrawingOutsideViewBox: true,
+                        fit: BoxFit.fill,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Spacer(),
+              Spacer(),
+              GestureDetector(
+                onTap: _selectToDate,
+                child: Container(
+                  width: 140,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Color(0xffffffff),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xffc2c2c2),
+                        offset: Offset(6, 3),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        to,
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 12,
+                          color: const Color(0xff6b0772),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      Spacer(),
+                      SvgPicture.string(
+                        _svg_bop1i,
+                        allowDrawingOutsideViewBox: true,
+                        fit: BoxFit.fill,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Spacer(),
+              Spacer(),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                Text(
+                  'Total Days',
+                  style: TextStyle(
+                    fontFamily: 'Arial',
+                    fontSize: 12,
+                    color: const Color(0xff6b0772),
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0, right: 25, top: 0),
+            child: Container(
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: const Color(0xffffffff),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xffc2c2c2),
+                      offset: Offset(6, 3),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 18.0, left: 10),
+                  child: Text(
+                    days,
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 14,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Row(
+              children: [
+                Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    applyLeave("1", reason.text, from, to);
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xff6b0772),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6b2e1),
+                          offset: Offset(6, 3),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                        child: Text(
+                      'Apply',
                       style: TextStyle(
                         fontFamily: 'Arial',
                         fontSize: 20,
                         color: const Color(0xffffffff),
                         fontWeight: FontWeight.w700,
                       ),
-                      softWrap: false,
+                      textAlign: TextAlign.left,
+                    )),
+                  ),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color(0xff6b0772),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xfff6b2e1),
+                          offset: Offset(6, 3),
+                          blurRadius: 12,
+                        ),
+                      ],
                     ),
+                    child: Center(
+                        child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontFamily: 'Arial',
+                        fontSize: 20,
+                        color: const Color(0xffffffff),
+                        fontWeight: FontWeight.w700,
+                      ),
+                      textAlign: TextAlign.left,
+                    )),
                   ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(start: 34.0, end: 37.0),
-            Pin(size: 38.0, middle: 0.1662),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffc2c2c2),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(start: 36.0, end: 35.0),
-            Pin(size: 38.0, middle: 0.644),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffc2c2c2),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(start: 34.0, end: 37.0),
-            Pin(size: 38.0, middle: 0.2632),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffc2c2c2),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(start: 34.0, end: 37.0),
-            Pin(size: 38.0, middle: 0.3601),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffffffff),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(start: 34.0, end: 37.0),
-            Pin(size: 38.0, middle: 0.4571),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffffffff),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 130.0, start: 34.0),
-            Pin(size: 38.0, middle: 0.554),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffffffff),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 130.0, end: 39.0),
-            Pin(size: 38.0, middle: 0.554),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffffffff),
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffc2c2c2),
-                    offset: Offset(6, 3),
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 41.0, start: 37.0),
-            Pin(size: 11.0, start: 103.0),
-            child: Text(
-              'Appln.No',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 47.0, start: 37.0),
-            Pin(size: 11.0, middle: 0.5981),
-            child: Text(
-              'Total Days',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 11.0, start: 46.0),
-            Pin(size: 11.0, start: 133.0),
-            child: Text(
-              '20',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 6.0, start: 48.0),
-            Pin(size: 11.0, middle: 0.6382),
-            child: Text(
-              '4',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 31.0, start: 48.0),
-            Pin(size: 11.0, middle: 0.3672),
-            child: Text(
-              'Casual',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 49.0, start: 51.0),
-            Pin(size: 11.0, middle: 0.4566),
-            child: Text(
-              'Family Trip',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 50.0, start: 48.0),
-            Pin(size: 11.0, middle: 0.5527),
-            child: Text(
-              '10/01/2022',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Align(
-            alignment: Alignment(0.323, 0.105),
-            child: SizedBox(
-              width: 50.0,
-              height: 11.0,
-              child: Text(
-                '13/01/2022',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 10,
-                  color: const Color(0xff6b0772),
                 ),
-                softWrap: false,
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 52.0, start: 37.0),
-            Pin(size: 11.0, middle: 0.2243),
-            child: Text(
-              'Department',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 103.0, start: 44.0),
-            Pin(size: 11.0, middle: 0.271),
-            child: Text(
-              'Cardiothoracic surgeon',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 63.0, start: 37.0),
-            Pin(size: 11.0, middle: 0.3178),
-            child: Text(
-              'Type of Leave',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 29.0, start: 37.0),
-            Pin(size: 11.0, middle: 0.4112),
-            child: Text(
-              'Cause',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 23.0, start: 37.0),
-            Pin(size: 11.0, middle: 0.5047),
-            child: Text(
-              'From',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 10,
-                color: const Color(0xff6b0772),
-              ),
-              softWrap: false,
-            ),
-          ),
-          Align(
-            alignment: Alignment(0.112, 0.015),
-            child: SizedBox(
-              width: 11.0,
-              height: 11.0,
-              child: Text(
-                'To',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 10,
-                  color: const Color(0xff6b0772),
-                ),
-                softWrap: false,
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 10.0, end: 54.0),
-            Pin(size: 5.0, middle: 0.3669),
-            child: Stack(
-              children: <Widget>[
-                SizedBox.expand(
-                    child: SvgPicture.string(
-                  _svg_f0ox06,
-                  allowDrawingOutsideViewBox: true,
-                  fit: BoxFit.fill,
-                )),
+                Spacer()
               ],
-            ),
-          ),
-          Align(
-            alignment: Alignment(-0.232, 0.107),
-            child: SizedBox(
-              width: 19.0,
-              height: 19.0,
-              child: Stack(
-                children: <Widget>[
-                  SizedBox.expand(
-                      child: SvgPicture.string(
-                    _svg_bop1i,
-                    allowDrawingOutsideViewBox: true,
-                    fit: BoxFit.fill,
-                  )),
-                ],
-              ),
-            ),
-          ),
-          Pinned.fromPins(
-            Pin(size: 19.0, end: 49.0),
-            Pin(size: 19.0, middle: 0.5533),
-            child: Stack(
-              children: <Widget>[
-                SizedBox.expand(
-                    child: SvgPicture.string(
-                  _svg_bop1i,
-                  allowDrawingOutsideViewBox: true,
-                  fit: BoxFit.fill,
-                )),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment(-0.556, 0.537),
-            child: PageLink(
-              links: [
-                PageLinkInfo(
-                  ease: Curves.easeOut,
-                  duration: 0.3,
-                  //pageBuilder: () => Home2(),
-                ),
-              ],
-              child: Container(
-                width: 112.0,
-                height: 38.0,
-                decoration: BoxDecoration(
-                  color: const Color(0xff6b0772),
-                  borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xfff6b2e1),
-                      offset: Offset(6, 3),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment(0.452, 0.537),
-            child: PageLink(
-              links: [
-                PageLinkInfo(
-                  ease: Curves.easeOut,
-                  duration: 0.3,
-                  //pageBuilder: () => Home2(),
-                ),
-              ],
-              child: Container(
-                width: 112.0,
-                height: 38.0,
-                decoration: BoxDecoration(
-                  color: const Color(0xff6b0772),
-                  borderRadius: BorderRadius.circular(8.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xfff6b2e1),
-                      offset: Offset(6, 3),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment(-0.454, 0.526),
-            child: SizedBox(
-              width: 56.0,
-              height: 22.0,
-              child: Text(
-                'Apply',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 20,
-                  color: const Color(0xffffffff),
-                  fontWeight: FontWeight.w700,
-                ),
-                softWrap: false,
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment(0.381, 0.526),
-            child: SizedBox(
-              width: 66.0,
-              height: 22.0,
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 20,
-                  color: const Color(0xffffffff),
-                  fontWeight: FontWeight.w700,
-                ),
-                softWrap: false,
-              ),
             ),
           ),
         ],

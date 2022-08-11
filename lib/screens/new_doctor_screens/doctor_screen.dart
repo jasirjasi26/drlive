@@ -1,12 +1,13 @@
+import 'package:active_ecommerce_flutter/screens/patientScreens/ChatRoom.dart';
+import 'package:active_ecommerce_flutter/screens/patientScreens/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:custom_horizontal_calendar/custom_horizontal_calendar.dart';
 import 'package:custom_horizontal_calendar/date_row.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adobe_xd/pinned.dart';
-import 'package:active_ecommerce_flutter/screens/patientScreens/payment_details.dart';
 import 'package:active_ecommerce_flutter/Message.dart';
-import 'package:active_ecommerce_flutter/doctors_data/doctor_list.dart';
+import 'package:active_ecommerce_flutter/models/doctor_list.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -14,6 +15,7 @@ import 'package:active_ecommerce_flutter/data_handler/doctors_data_fetch.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
+
 
 class DoctorScreen extends StatefulWidget {
   DoctorScreen({Key key, this.is_base_category = false, this.id})
@@ -28,10 +30,10 @@ class DoctorScreen extends StatefulWidget {
 
 class DoctorScreenState extends State<DoctorScreen> {
   Future<Doctors> futureAlbum;
-  DateTime chosen=DateTime.now();
-  String selected="Call";
-  List<String> _locations = ['Call', 'Chat', 'C', 'D']; // Option 2
-  String _selectedLocation;
+  DateTime chosen = DateTime.now();
+  //String selected = "Call";
+  List<String> _locations = ['Call', 'Chat', 'Video']; // Option 2
+  String _selectedLocation="Call";
 
   @override
   void initState() {
@@ -236,9 +238,11 @@ class DoctorScreenState extends State<DoctorScreen> {
                                 ),
                               ],
                             ),
-                            SizedBox(width: 25,),
+                            SizedBox(
+                              width: 25,
+                            ),
                             Container(
-                              width: MediaQuery.of(context).size.width*0.3,
+                              width: MediaQuery.of(context).size.width * 0.3,
                               child: Center(
                                 child: Row(
                                   children: [
@@ -248,7 +252,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                          return Message();
+                                          return ChatPage(snapshot.data.doctors[i].id.toString(),snapshot.data.doctors[i].doctordetails.firstName);
                                         }));
                                       },
                                       child: Container(
@@ -406,7 +410,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                           ],
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 25,left: 20),
+                          margin: EdgeInsets.only(top: 25, left: 20),
                           child: Row(
                             children: [
                               Text(
@@ -486,7 +490,7 @@ class DoctorScreenState extends State<DoctorScreen> {
                         CustomHorizontalCalendar(
                           onDateChoosen: (date) {
                             setState(() {
-                              chosen=date;
+                              chosen = date;
                             });
                           },
                           inintialDate: DateTime.now(),
@@ -537,7 +541,9 @@ class DoctorScreenState extends State<DoctorScreen> {
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 child: Text(
-                                  snapshot.data.doctors[i].details.replaceAll("</p>", "").replaceAll("<p>", ""),
+                                  snapshot.data.doctors[i].details
+                                      .replaceAll("</p>", "")
+                                      .replaceAll("<p>", ""),
                                   style: TextStyle(
                                     fontFamily: 'Arial',
                                     fontSize: 14,
@@ -550,7 +556,9 @@ class DoctorScreenState extends State<DoctorScreen> {
                         SizedBox(
                           height: 50,
                         ),
-                        appoinmentBookButtons(snapshot.data.doctors[i].fees.toString(),snapshot.data.doctors[i].doctordetails.firstName)
+                        appoinmentBookButtons(
+                            snapshot.data.doctors[i].fees.toString(),
+                            snapshot.data.doctors[i].doctordetails.firstName,snapshot.data.doctors[i].id.toString())
                       ],
                     ),
                   ),
@@ -569,12 +577,12 @@ class DoctorScreenState extends State<DoctorScreen> {
                 child: Container(
                     width: 50,
                     height: 50,
-                    child:  CircularProgressIndicator())));
+                    child: CircularProgressIndicator())));
       },
     );
   }
 
-  void showBookingDialog(String fees,String docName) {
+  void showBookingDialog(String fees, String docName,String docId) {
     showGeneralDialog(
       barrierLabel: "Barrier",
       barrierDismissible: true,
@@ -584,551 +592,523 @@ class DoctorScreenState extends State<DoctorScreen> {
       pageBuilder: (_, __, ___) {
         return Material(
             type: MaterialType.transparency,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                  height: 450,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ///Dialog Appbar
-                      ///
-                      Container(
-                        height: 70.0,
-                        width: MediaQuery.of(context).size.width,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 60.0,
-                              width: MediaQuery.of(context).size.width,
-                              child: SvgPicture.string(
-                                '<svg viewBox="0.0 280.0 360.0 72.0" ><defs><filter id="shadow"><feDropShadow dx="6" dy="3" stdDeviation="12"/></filter><linearGradient id="gradient" x1="0.5" y1="0.315582" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff6b0772"  /><stop offset="1.0" stop-color="#fff6b2e1"  /></linearGradient></defs><path transform="translate(0.0, 280.0)" d="M 36 0 L 324 0 C 343.8822631835938 0 360 16.11774826049805 360 36 L 360 72 L 0 72 L 0 36 C 0 16.11774826049805 16.11774826049805 0 36 0 Z" fill="url(#gradient)" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
-                                allowDrawingOutsideViewBox: true,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Spacer(),
-                                Center(
-                                  child: Container(
-                                    height: 30,
-                                    width: 30,
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Pinned.fromPins(
-                                          Pin(start: 0.0, end: 0.0),
-                                          Pin(start: 0.0, end: 0.0),
-                                          child: SvgPicture.string(
-                                            '<svg viewBox="3.9 3.9 30.9 30.9" ><path  d="M 6.32553768157959 3.949219942092896 C 5.012675762176514 3.949219942092896 3.949219942092896 5.012675762176514 3.949219942092896 6.32553768157959 L 3.949219942092896 27.72176551818848 C 3.949219942092896 29.03456687927246 5.012675762176514 30.09813117980957 6.32553768157959 30.09813117980957 L 19.03063011169434 30.09813117980957 C 20.37162208557129 32.90262222290039 23.22790908813477 34.85543823242188 26.53593254089355 34.85543823242188 C 31.11917304992676 34.85543823242188 34.85543823242188 31.11917304992676 34.85543823242188 26.53593254089355 C 34.85543823242188 23.22790908813477 32.90262222290039 20.37162208557129 30.09813117980957 19.03063011169434 L 30.09813117980957 6.32553768157959 C 30.09813117980957 5.012675762176514 29.03456687927246 3.949219942092896 27.72176551818848 3.949219942092896 L 6.32553768157959 3.949219942092896 Z M 6.32553768157959 6.32553768157959 L 27.72176551818848 6.32553768157959 L 27.72176551818848 11.07816028594971 L 6.32553768157959 11.07816028594971 L 6.32553768157959 6.32553768157959 Z M 12.26870441436768 14.6449499130249 C 12.92269611358643 14.6449499130249 13.45923519134521 15.18136978149414 13.45923519134521 15.83547973632812 C 13.45923519134521 16.48959350585938 12.92269611358643 17.02131462097168 12.26870441436768 17.02131462097168 C 11.61459255218506 17.02131462097168 11.07816028594971 16.48959350585938 11.07816028594971 15.83547973632812 C 11.07816028594971 15.18136978149414 11.61459255218506 14.6449499130249 12.26870441436768 14.6449499130249 Z M 17.02131462097168 14.6449499130249 C 17.68012428283691 14.6449499130249 18.21184539794922 15.18136978149414 18.21184539794922 15.83547973632812 C 18.21184539794922 16.48959350585938 17.68012428283691 17.02131462097168 17.02131462097168 17.02131462097168 C 16.36720275878906 17.02131462097168 15.83547973632812 16.48959350585938 15.83547973632812 15.83547973632812 C 15.83547973632812 15.18136978149414 16.36720275878906 14.6449499130249 17.02131462097168 14.6449499130249 Z M 21.77862358093262 14.6449499130249 C 22.43273544311523 14.6449499130249 22.96915626525879 15.18136978149414 22.96915626525879 15.83547973632812 C 22.96915626525879 16.48959350585938 22.43273544311523 17.02131462097168 21.77862358093262 17.02131462097168 C 21.12451362609863 17.02131462097168 20.58809089660645 16.48959350585938 20.58809089660645 15.83547973632812 C 20.58809089660645 15.18136978149414 21.12451362609863 14.6449499130249 21.77862358093262 14.6449499130249 Z M 26.53593254089355 14.6449499130249 C 27.1900463104248 14.6449499130249 27.72176551818848 15.18136978149414 27.72176551818848 15.83547973632812 C 27.72176551818848 16.48959350585938 27.1900463104248 17.02131462097168 26.53593254089355 17.02131462097168 C 25.87712287902832 17.02131462097168 25.34539985656738 16.48959350585938 25.34539985656738 15.83547973632812 C 25.34539985656738 15.18136978149414 25.87712287902832 14.6449499130249 26.53593254089355 14.6449499130249 Z M 7.511335849761963 19.40225791931152 C 8.170120239257812 19.40225791931152 8.701842308044434 19.9340991973877 8.701842308044434 20.58809089660645 C 8.701842308044434 21.24690055847168 8.170120239257812 21.77862358093262 7.511335849761963 21.77862358093262 C 6.857259273529053 21.77862358093262 6.32553768157959 21.24690055847168 6.32553768157959 20.58809089660645 C 6.32553768157959 19.9340991973877 6.857259273529053 19.40225791931152 7.511335849761963 19.40225791931152 Z M 12.26870441436768 19.40225791931152 C 12.92269611358643 19.40225791931152 13.45923519134521 19.9340991973877 13.45923519134521 20.58809089660645 C 13.45923519134521 21.24690055847168 12.92269611358643 21.77862358093262 12.26870441436768 21.77862358093262 C 11.61459255218506 21.77862358093262 11.07816028594971 21.24690055847168 11.07816028594971 20.58809089660645 C 11.07816028594971 19.9340991973877 11.61459255218506 19.40225791931152 12.26870441436768 19.40225791931152 Z M 17.02131462097168 19.40225791931152 C 17.68012428283691 19.40225791931152 18.21184539794922 19.9340991973877 18.21184539794922 20.58809089660645 C 18.21184539794922 21.24690055847168 17.68012428283691 21.77862358093262 17.02131462097168 21.77862358093262 C 16.36720275878906 21.77862358093262 15.83547973632812 21.24690055847168 15.83547973632812 20.58809089660645 C 15.83547973632812 19.9340991973877 16.36720275878906 19.40225791931152 17.02131462097168 19.40225791931152 Z M 26.53593254089355 20.58809089660645 C 29.82986068725586 20.58809089660645 32.47907257080078 23.2373046875 32.47907257080078 26.53593254089355 C 32.47907257080078 29.82986068725586 29.82986068725586 32.47907257080078 26.53593254089355 32.47907257080078 C 23.2373046875 32.47907257080078 20.58809089660645 29.82986068725586 20.58809089660645 26.53593254089355 C 20.58809089660645 23.2373046875 23.2373046875 20.58809089660645 26.53593254089355 20.58809089660645 Z M 26.51713943481445 21.75983047485352 C 25.85832977294922 21.77392578125 25.33600425720215 22.31034660339355 25.34539985656738 22.96915626525879 L 25.34539985656738 27.02537155151367 L 27.46771049499512 29.14756202697754 C 27.76416778564453 29.45811462402344 28.21108436584473 29.58520126342773 28.62523460388184 29.47220802307129 C 29.03926658630371 29.36873054504395 29.36873054504395 29.03926658630371 29.47220802307129 28.62523460388184 C 29.58520126342773 28.21108436584473 29.45811462402344 27.76416778564453 29.14756202697754 27.46771049499512 L 27.72176551818848 26.04191589355469 L 27.72176551818848 22.96915626525879 C 27.72646522521973 22.64920616149902 27.60407447814941 22.33383560180664 27.37351036071777 22.10796737670898 C 27.14764213562012 21.88210105895996 26.83708953857422 21.7551326751709 26.51713943481445 21.75983047485352 Z M 7.511335849761963 24.15498924255371 C 8.170120239257812 24.15498924255371 8.701842308044434 24.69140815734863 8.701842308044434 25.34539985656738 C 8.701842308044434 25.99951362609863 8.170120239257812 26.53593254089355 7.511335849761963 26.53593254089355 C 6.857259273529053 26.53593254089355 6.32553768157959 25.99951362609863 6.32553768157959 25.34539985656738 C 6.32553768157959 24.69140815734863 6.857259273529053 24.15498924255371 7.511335849761963 24.15498924255371 Z M 12.26870441436768 24.15498924255371 C 12.92269611358643 24.15498924255371 13.45923519134521 24.69140815734863 13.45923519134521 25.34539985656738 C 13.45923519134521 25.99951362609863 12.92269611358643 26.53593254089355 12.26870441436768 26.53593254089355 C 11.61459255218506 26.53593254089355 11.07816028594971 25.99951362609863 11.07816028594971 25.34539985656738 C 11.07816028594971 24.69140815734863 11.61459255218506 24.15498924255371 12.26870441436768 24.15498924255371 Z M 17.02131462097168 24.15498924255371 C 17.68012428283691 24.15498924255371 18.21184539794922 24.69140815734863 18.21184539794922 25.34539985656738 C 18.21184539794922 25.99951362609863 17.68012428283691 26.53593254089355 17.02131462097168 26.53593254089355 C 16.36720275878906 26.53593254089355 15.83547973632812 25.99951362609863 15.83547973632812 25.34539985656738 C 15.83547973632812 24.69140815734863 16.36720275878906 24.15498924255371 17.02131462097168 24.15498924255371 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                                            allowDrawingOutsideViewBox: true,
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                      height: 30,
-                                      child: Text(
-                                        '   Appointment Details',
-                                        style: TextStyle(
-                                          fontFamily: 'Arial',
-                                          fontSize: 22,
-                                          color: const Color(0xffffffff),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      )),
-                                ),
-                                Spacer()
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: Container(
-                          height: 290,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
+            child: StatefulBuilder(builder: (context, setState) {
+              return Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    height: 400,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ///Dialog Appbar
+                        ///
+                        Container(
+                          height: 70.0,
+                          width: MediaQuery.of(context).size.width,
+                          child: Stack(
                             children: [
-                              SizedBox(
-                                height: 10,
+                              Container(
+                                height: 60.0,
+                                width: MediaQuery.of(context).size.width,
+                                child: SvgPicture.string(
+                                  '<svg viewBox="0.0 280.0 360.0 72.0" ><defs><filter id="shadow"><feDropShadow dx="6" dy="3" stdDeviation="12"/></filter><linearGradient id="gradient" x1="0.5" y1="0.315582" x2="0.5" y2="1.0"><stop offset="0.0" stop-color="#ff6b0772"  /><stop offset="1.0" stop-color="#fff6b2e1"  /></linearGradient></defs><path transform="translate(0.0, 280.0)" d="M 36 0 L 324 0 C 343.8822631835938 0 360 16.11774826049805 360 36 L 360 72 L 0 72 L 0 36 C 0 16.11774826049805 16.11774826049805 0 36 0 Z" fill="url(#gradient)" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" filter="url(#shadow)"/></svg>',
+                                  allowDrawingOutsideViewBox: true,
+                                  fit: BoxFit.fill,
+                                ),
                               ),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Spacer(),
                                   Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Doctor Name",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Pinned.fromPins(
+                                            Pin(start: 0.0, end: 0.0),
+                                            Pin(start: 0.0, end: 0.0),
+                                            child: SvgPicture.string(
+                                              '<svg viewBox="3.9 3.9 30.9 30.9" ><path  d="M 6.32553768157959 3.949219942092896 C 5.012675762176514 3.949219942092896 3.949219942092896 5.012675762176514 3.949219942092896 6.32553768157959 L 3.949219942092896 27.72176551818848 C 3.949219942092896 29.03456687927246 5.012675762176514 30.09813117980957 6.32553768157959 30.09813117980957 L 19.03063011169434 30.09813117980957 C 20.37162208557129 32.90262222290039 23.22790908813477 34.85543823242188 26.53593254089355 34.85543823242188 C 31.11917304992676 34.85543823242188 34.85543823242188 31.11917304992676 34.85543823242188 26.53593254089355 C 34.85543823242188 23.22790908813477 32.90262222290039 20.37162208557129 30.09813117980957 19.03063011169434 L 30.09813117980957 6.32553768157959 C 30.09813117980957 5.012675762176514 29.03456687927246 3.949219942092896 27.72176551818848 3.949219942092896 L 6.32553768157959 3.949219942092896 Z M 6.32553768157959 6.32553768157959 L 27.72176551818848 6.32553768157959 L 27.72176551818848 11.07816028594971 L 6.32553768157959 11.07816028594971 L 6.32553768157959 6.32553768157959 Z M 12.26870441436768 14.6449499130249 C 12.92269611358643 14.6449499130249 13.45923519134521 15.18136978149414 13.45923519134521 15.83547973632812 C 13.45923519134521 16.48959350585938 12.92269611358643 17.02131462097168 12.26870441436768 17.02131462097168 C 11.61459255218506 17.02131462097168 11.07816028594971 16.48959350585938 11.07816028594971 15.83547973632812 C 11.07816028594971 15.18136978149414 11.61459255218506 14.6449499130249 12.26870441436768 14.6449499130249 Z M 17.02131462097168 14.6449499130249 C 17.68012428283691 14.6449499130249 18.21184539794922 15.18136978149414 18.21184539794922 15.83547973632812 C 18.21184539794922 16.48959350585938 17.68012428283691 17.02131462097168 17.02131462097168 17.02131462097168 C 16.36720275878906 17.02131462097168 15.83547973632812 16.48959350585938 15.83547973632812 15.83547973632812 C 15.83547973632812 15.18136978149414 16.36720275878906 14.6449499130249 17.02131462097168 14.6449499130249 Z M 21.77862358093262 14.6449499130249 C 22.43273544311523 14.6449499130249 22.96915626525879 15.18136978149414 22.96915626525879 15.83547973632812 C 22.96915626525879 16.48959350585938 22.43273544311523 17.02131462097168 21.77862358093262 17.02131462097168 C 21.12451362609863 17.02131462097168 20.58809089660645 16.48959350585938 20.58809089660645 15.83547973632812 C 20.58809089660645 15.18136978149414 21.12451362609863 14.6449499130249 21.77862358093262 14.6449499130249 Z M 26.53593254089355 14.6449499130249 C 27.1900463104248 14.6449499130249 27.72176551818848 15.18136978149414 27.72176551818848 15.83547973632812 C 27.72176551818848 16.48959350585938 27.1900463104248 17.02131462097168 26.53593254089355 17.02131462097168 C 25.87712287902832 17.02131462097168 25.34539985656738 16.48959350585938 25.34539985656738 15.83547973632812 C 25.34539985656738 15.18136978149414 25.87712287902832 14.6449499130249 26.53593254089355 14.6449499130249 Z M 7.511335849761963 19.40225791931152 C 8.170120239257812 19.40225791931152 8.701842308044434 19.9340991973877 8.701842308044434 20.58809089660645 C 8.701842308044434 21.24690055847168 8.170120239257812 21.77862358093262 7.511335849761963 21.77862358093262 C 6.857259273529053 21.77862358093262 6.32553768157959 21.24690055847168 6.32553768157959 20.58809089660645 C 6.32553768157959 19.9340991973877 6.857259273529053 19.40225791931152 7.511335849761963 19.40225791931152 Z M 12.26870441436768 19.40225791931152 C 12.92269611358643 19.40225791931152 13.45923519134521 19.9340991973877 13.45923519134521 20.58809089660645 C 13.45923519134521 21.24690055847168 12.92269611358643 21.77862358093262 12.26870441436768 21.77862358093262 C 11.61459255218506 21.77862358093262 11.07816028594971 21.24690055847168 11.07816028594971 20.58809089660645 C 11.07816028594971 19.9340991973877 11.61459255218506 19.40225791931152 12.26870441436768 19.40225791931152 Z M 17.02131462097168 19.40225791931152 C 17.68012428283691 19.40225791931152 18.21184539794922 19.9340991973877 18.21184539794922 20.58809089660645 C 18.21184539794922 21.24690055847168 17.68012428283691 21.77862358093262 17.02131462097168 21.77862358093262 C 16.36720275878906 21.77862358093262 15.83547973632812 21.24690055847168 15.83547973632812 20.58809089660645 C 15.83547973632812 19.9340991973877 16.36720275878906 19.40225791931152 17.02131462097168 19.40225791931152 Z M 26.53593254089355 20.58809089660645 C 29.82986068725586 20.58809089660645 32.47907257080078 23.2373046875 32.47907257080078 26.53593254089355 C 32.47907257080078 29.82986068725586 29.82986068725586 32.47907257080078 26.53593254089355 32.47907257080078 C 23.2373046875 32.47907257080078 20.58809089660645 29.82986068725586 20.58809089660645 26.53593254089355 C 20.58809089660645 23.2373046875 23.2373046875 20.58809089660645 26.53593254089355 20.58809089660645 Z M 26.51713943481445 21.75983047485352 C 25.85832977294922 21.77392578125 25.33600425720215 22.31034660339355 25.34539985656738 22.96915626525879 L 25.34539985656738 27.02537155151367 L 27.46771049499512 29.14756202697754 C 27.76416778564453 29.45811462402344 28.21108436584473 29.58520126342773 28.62523460388184 29.47220802307129 C 29.03926658630371 29.36873054504395 29.36873054504395 29.03926658630371 29.47220802307129 28.62523460388184 C 29.58520126342773 28.21108436584473 29.45811462402344 27.76416778564453 29.14756202697754 27.46771049499512 L 27.72176551818848 26.04191589355469 L 27.72176551818848 22.96915626525879 C 27.72646522521973 22.64920616149902 27.60407447814941 22.33383560180664 27.37351036071777 22.10796737670898 C 27.14764213562012 21.88210105895996 26.83708953857422 21.7551326751709 26.51713943481445 21.75983047485352 Z M 7.511335849761963 24.15498924255371 C 8.170120239257812 24.15498924255371 8.701842308044434 24.69140815734863 8.701842308044434 25.34539985656738 C 8.701842308044434 25.99951362609863 8.170120239257812 26.53593254089355 7.511335849761963 26.53593254089355 C 6.857259273529053 26.53593254089355 6.32553768157959 25.99951362609863 6.32553768157959 25.34539985656738 C 6.32553768157959 24.69140815734863 6.857259273529053 24.15498924255371 7.511335849761963 24.15498924255371 Z M 12.26870441436768 24.15498924255371 C 12.92269611358643 24.15498924255371 13.45923519134521 24.69140815734863 13.45923519134521 25.34539985656738 C 13.45923519134521 25.99951362609863 12.92269611358643 26.53593254089355 12.26870441436768 26.53593254089355 C 11.61459255218506 26.53593254089355 11.07816028594971 25.99951362609863 11.07816028594971 25.34539985656738 C 11.07816028594971 24.69140815734863 11.61459255218506 24.15498924255371 12.26870441436768 24.15498924255371 Z M 17.02131462097168 24.15498924255371 C 17.68012428283691 24.15498924255371 18.21184539794922 24.69140815734863 18.21184539794922 25.34539985656738 C 18.21184539794922 25.99951362609863 17.68012428283691 26.53593254089355 17.02131462097168 26.53593254089355 C 16.36720275878906 26.53593254089355 15.83547973632812 25.99951362609863 15.83547973632812 25.34539985656738 C 15.83547973632812 24.69140815734863 16.36720275878906 24.15498924255371 17.02131462097168 24.15498924255371 Z" fill="#ffffff" stroke="none" stroke-width="1" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                                              allowDrawingOutsideViewBox: true,
+                                              fit: BoxFit.fill,
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  Spacer(),
                                   Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            ":",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
+                                    child: Container(
+                                        height: 30,
+                                        child: Text(
+                                          '   Appointment Details',
+                                          style: TextStyle(
+                                            fontFamily: 'Arial',
+                                            fontSize: 22,
+                                            color: const Color(0xffffffff),
+                                            fontWeight: FontWeight.w700,
                                           ),
-                                        ),
-                                      ),
-                                    ),
+                                          textAlign: TextAlign.left,
+                                        )),
                                   ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Dr. "+docName,
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
+                                  Spacer()
                                 ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "  Appoinment",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "   :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Cardiology",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Consultation Method   :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: DropdownButton<String>(
-                                            items: <String>['Chat', 'Call', 'Video Call'].map((String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                onTap: (){
-                                                  setState(() {
-                                                    selected=value;
-                                                  });
-                                                  print(selected);
-                                                },
-                                                child: Text(selected),
-                                              );
-                                            }).toList(),
-                                            onChanged: (_) {
-
-                                            },
-                                          )
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            " Appoinment Date               :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            chosen.day.toString()+"/"+chosen.month.toString()+"/"+chosen.year.toString()+"         ",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            " Patient Name              :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            user_name.value+"   ",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Phone Number                  :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            user_phone.value ,
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Token Number              :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "11         ",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            "Consultation Fee              :",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 18,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          child: Text(
-                                            fees+"/-        ",
-                                            textAlign: TextAlign.left,
-                                            // overflow: TextOverflow.ellipsis,
-                                            // maxLines: 1,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                //height: 1.6,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                ],
-                              ),
+                              )
                             ],
                           ),
                         ),
-                      ),
+                        Center(
+                          child: Container(
+                            height: 240,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "Doctor Name",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              ":",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "Dr. " + docName.toUpperCase(),
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "  Appoinment",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "   :",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "Cardiology",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "Consultation Method   :",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: DropdownButton<String>(
+                                              hint: Text(_selectedLocation),
+                                              value: _selectedLocation,
+                                              isDense: true,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  _selectedLocation = newValue;
+                                                });
+                                                print(_selectedLocation);
+                                              },
+                                              items: _locations
+                                                  .map((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              " Appoinment Date               :",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              chosen.day.toString() +
+                                                  "/" +
+                                                  chosen.month.toString() +
+                                                  "/" +
+                                                  chosen.year.toString() +
+                                                  "         ",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              " Patient Name              :",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              user_name.value.toUpperCase() + "   ",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "Phone Number                  :",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              user_phone.value,
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              "Consultation Fee              :",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Center(
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                            child: Text(
+                                              fees + "/-        ",
+                                              textAlign: TextAlign.left,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // maxLines: 1,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                  //height: 1.6,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
 
-                      ///confirmOrCancelButtons
-
-                      confirmOrCancelButtons(),
-                    ],
-                  )),
-            ));
+                        ///confirmOrCancelButtons
+                        confirmOrCancelButtons(docId),
+                      ],
+                    )),
+              );
+            }));
       },
       transitionBuilder: (_, anim, __, child) {
         return SlideTransition(
@@ -1139,7 +1119,7 @@ class DoctorScreenState extends State<DoctorScreen> {
     );
   }
 
-  confirmOrCancelButtons() {
+  confirmOrCancelButtons(String docId) {
     return Container(
       height: 90,
       child: Row(
@@ -1183,9 +1163,19 @@ class DoctorScreenState extends State<DoctorScreen> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return PaymentDetails();
-              }));
+              String date=chosen.year.toString()+"-"+chosen.month.toString()+"-"+chosen.day.toString();
+              print(date);
+              DoctorsData().takeAppoinment(docId, user_id.value.toString(), "1", date,_selectedLocation.toLowerCase() ).then((value) => {
+                if(value){
+                  Navigator.pop(context),
+
+
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //   return PaymentDetails();
+                  // }));
+                }
+              });
+
             },
             child: Center(
               child: Container(
@@ -1223,14 +1213,14 @@ class DoctorScreenState extends State<DoctorScreen> {
     );
   }
 
-  appoinmentBookButtons(String fees,String docName) {
+  appoinmentBookButtons(String fees, String docName,String docId) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         GestureDetector(
           onTap: () {
-            showBookingDialog(fees,docName);
+            showBookingDialog(fees, docName,docId);
           },
           child: Center(
             child: Container(

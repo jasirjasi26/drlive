@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/ui_sections/main_drawer.dart';
-import 'package:toast/toast.dart';
-import 'package:active_ecommerce_flutter/screens/doctorScreens/doctor_screen.dart';
+import 'package:active_ecommerce_flutter/screens/new_doctor_screens/doctor_screen.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:adobe_xd/pinned.dart';
-import 'package:active_ecommerce_flutter/doctors_data/doctor_list.dart';
+import 'package:active_ecommerce_flutter/models/doctor_list.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';

@@ -1,17 +1,69 @@
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:adobe_xd/pinned.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
-import 'package:active_ecommerce_flutter/XDlogin_page.dart';
+import 'package:active_ecommerce_flutter/screens/login_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 
-class Signuppage extends StatelessWidget {
+class Signuppage extends StatefulWidget {
+
+  @override
+  SignuppageState createState() => SignuppageState();
+}
+
+class SignuppageState extends State<Signuppage> {
   var uname = TextEditingController();
   var pass = TextEditingController();
   var cpass = TextEditingController();
   var phone = TextEditingController();
+  int _radioValue1 = 0;
+  DateTime chosen = DateTime.now();
+  String date="Date of Birth";
+  String gender="male";
+
+
+  Future<void> _selectDate() async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: chosen,
+        firstDate: DateTime(1900, 1),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != chosen)
+      setState(() {
+        chosen = picked;
+        date = chosen.year.toString() +
+            "-" +
+            chosen.month.toString() +
+            "-" +
+            chosen.day.toString();
+      });
+  }
+
+  void _handleRadioValueChange1(int value) {
+    setState(() {
+      _radioValue1 = value;
+    });
+
+    if(_radioValue1==0){
+      setState(() {
+        gender="male";
+      });
+    }
+    if(_radioValue1==1){
+      setState(() {
+        gender="female";
+      });
+    }
+    if(_radioValue1==3){
+      setState(() {
+        gender="other";
+      });
+    }
+  }
+
 
 
   @override
@@ -146,38 +198,43 @@ class Signuppage extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    height: 40,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: const Color(0xffffffff),
-                      border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xfff6d3eb),
-                          offset: Offset(6, 3),
-                          blurRadius: 6,
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding:EdgeInsets.only(
-                          left: 15, bottom: 15, top: 10, right: 15),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Date of Birth',
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 15,
-                              color: const Color(0xff858585),
-                            ),
-                            textAlign: TextAlign.center,
+                  GestureDetector(
+                    onTap: (){
+                      _selectDate();
+                    },
+                    child: Container(
+                      height: 40,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: const Color(0xffffffff),
+                        border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xfff6d3eb),
+                            offset: Offset(6, 3),
+                            blurRadius: 6,
                           ),
                         ],
                       ),
-                    )
+                      child: Padding(
+                        padding:EdgeInsets.only(
+                            left: 15, bottom: 15, top: 10, right: 15),
+                        child: Row(
+                          children: [
+                            Text(
+                              date,
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 15,
+                                color: const Color(0xff858585),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                    ),
                   ),
                   SizedBox(
                     height: 20,
@@ -197,68 +254,82 @@ class Signuppage extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      SizedBox(width: 15,),
-                      Container(
-                        height: 15,
-                        width: 15,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                          color: const Color(0xffffffff),
-                          border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                      Radio(
+                        activeColor: Color(0xff6b0772),
+                        value: 0,
+                        groupValue: _radioValue1,
+                        onChanged: _handleRadioValueChange1,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _radioValue1 = 0;
+                          });
+                        },
+                        child: Text(
+                          "Male",
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              //height: 1.6,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Text(
-                        '  Male',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff858585),
-                        ),
-                        textAlign: TextAlign.center,
+                      Radio(
+                        activeColor: Color(0xff6b0772),
+                        value: 1,
+                        groupValue: _radioValue1,
+                        onChanged: _handleRadioValueChange1,
                       ),
-                      SizedBox(width: 15,),
-                      Container(
-                        height: 15,
-                        width: 15,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                          color: const Color(0xffffffff),
-                          border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
-                        ),
-                      ),
-
-                      Text(
-                        '   FeMale',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff858585),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(width: 15,),
-                      Container(
-                        height: 15,
-                        width: 15,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                          color: const Color(0xffffffff),
-                          border: Border.all(width: 1.0, color: const Color(0xfff6d3eb)),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _radioValue1 = 1;
+                          });
+                        },
+                        child: Text(
+                          "Female",
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              //height: 1.6,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Text(
-                        '  Other',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 10,
-                          color: const Color(0xff858585),
+                      Radio(
+                        activeColor: Color(0xff6b0772),
+                        value: 2,
+                        groupValue: _radioValue1,
+                        onChanged: _handleRadioValueChange1,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _radioValue1 = 2;
+                          });
+                        },
+                        child: Text(
+                          "Other",
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              //height: 1.6,
+                              fontWeight: FontWeight.bold),
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -334,7 +405,12 @@ class Signuppage extends StatelessWidget {
                           pass.text.isNotEmpty &&
                           phone.text.isNotEmpty &&
                           cpass.text == pass.text) {
-                        UserData().register(uname.text, phone.text, pass.text);
+                        UserData().register(uname.text, phone.text, pass.text,date,gender).then((value) => {
+                          if(value){
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                builder: (BuildContext context) => BottomBar())),
+                          }
+                        });
                       } else {
                         print("Enter values");
                       }

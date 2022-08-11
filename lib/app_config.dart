@@ -19,6 +19,8 @@ class AppConfig {
   static const String RAW_BASE_URL = "${PROTOCOL}${DOMAIN_PATH}";
   static const String BASE_URL = "${RAW_BASE_URL}/${API_ENDPATH}";
   static const String IMAGE_URL ="https://drlive.optimisttechhub.com/storage/user/";
+  static const String STORY_URL ="https://drlive.optimisttechhub.com/storage/story/";
+  static const String BANNER_URL ="https://drlive.optimisttechhub.com/storage/banner/";
 
   //configure this if you are using amazon s3 like services
   //give direct link to file like https://[[bucketname]].s3.ap-southeast-1.amazonaws.com/

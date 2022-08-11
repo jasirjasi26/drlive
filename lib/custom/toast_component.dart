@@ -1,27 +1,31 @@
-import 'package:toast/toast.dart';
-import 'package:flutter/material.dart';
-import 'package:active_ecommerce_flutter/my_theme.dart';
-class ToastComponent {
-  static showDialog(String msg, context, {duration = 0, gravity = 0}) {
-    Toast.show(
-      msg,
-      context,
-      duration: duration != 0 ? duration : Toast.LENGTH_SHORT,
-      gravity: gravity != 0 ? gravity : Toast.BOTTOM,
-        backgroundColor:
-        Color.fromRGBO(239, 239, 239, .9),
-        textColor: MyTheme.font_grey,
-        border: Border(
-            top: BorderSide(
-              color: Color.fromRGBO(203, 209, 209, 1),
-            ),bottom:BorderSide(
-          color: Color.fromRGBO(203, 209, 209, 1),
-        ),right: BorderSide(
-          color: Color.fromRGBO(203, 209, 209, 1),
-        ),left: BorderSide(
-          color: Color.fromRGBO(203, 209, 209, 1),
-        )),
-        backgroundRadius: 6
-    );
-  }
-}
+// import 'package:flutter/material.dart';
+// import 'package:adobe_xd/pinned.dart';
+// import 'package:adobe_xd/page_link.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:active_ecommerce_flutter/models/doctor_list.dart';
+// import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:async';
+// import 'package:active_ecommerce_flutter/models/banners.dart';
+// import 'package:active_ecommerce_flutter/app_config.dart';
+// import 'dart:convert';
+//
+// class Leave3 extends StatefulWidget {
+//   Leave3({
+//     Key key,
+//     this.is_base_category,
+//   }) : super(key: key);
+//
+//   final bool is_base_category;
+//
+//   @override
+//   DoctorsListState createState() => DoctorsListState();
+// }
+//
+// class DoctorsListState extends State<Leave3> {
+//   List<String> type = [];
+//
+//   fetchTypes() async {
+//     String token = access_token.value;
+//     final response =
+//         await http.get('${AppC

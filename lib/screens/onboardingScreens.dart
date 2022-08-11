@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/ui_elements/styles.dart';
-import 'package:active_ecommerce_flutter/XDlogin_page.dart';
+import 'package:active_ecommerce_flutter/screens/login_page.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override

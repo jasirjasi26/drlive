@@ -3,7 +3,6 @@ import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:active_ecommerce_flutter/custom/toast_component.dart';
-import 'package:toast/toast.dart';
 import 'package:active_ecommerce_flutter/custom/input_decorations.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -48,16 +47,16 @@ class DoctorLoginDetailsState extends State<DoctorLoginDetails> {
             ],
           ));
     } else if (status.isRestricted) {
-      ToastComponent.showDialog(
-          "Go to your application settings and give photo permission ", context,
-          gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+      // ToastComponent.showDialog(
+      //     "Go to your application settings and give photo permission ", context,
+      //     gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
     } else if (status.isGranted) {
       //file = await ImagePicker.pickImage(source: ImageSource.camera);
       _file = await ImagePicker.pickImage(source: ImageSource.gallery);
 
       if (_file == null) {
-        ToastComponent.showDialog("No file is chosen", context,
-            gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
+        // ToastComponent.showDialog("No file is chosen", context,
+        //     gravity: Toast.CENTER, duration: Toast.LENGTH_LONG);
         return;
       }
 

@@ -1,12 +1,10 @@
 import 'dart:ui';
-import 'package:active_ecommerce_flutter/app_config.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/ui_sections/bottom_navigation.dart';
-import 'package:active_ecommerce_flutter/XDlogin_page.dart';
-
+import 'package:active_ecommerce_flutter/screens/login_page.dart';
+import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:active_ecommerce_flutter/data_handler/user_data.dart';
 
 class Splash extends StatefulWidget {
@@ -15,24 +13,22 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  PackageInfo _packageInfo = PackageInfo(
-    appName: AppConfig.app_name,
-    packageName: 'Unknown',
-    version: 'Unknown',
-    buildNumber: 'Unknown',
-  );
+
 
  Future<String> fetchUser(){
-      UserData().authenticateUser("8129902900", "password").then((value) => {
-        if(value){
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) => BottomBar())),
-        }else{
-          print("No user"),
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (BuildContext context) => Loginpage())),
-        }
-      });
+   if(user_phone.value!=null&&pass.value!=null){
+     UserData().authenticateUser(user_phone.value, pass.value).then((value) => {
+       if(value){
+         Navigator.of(context).pushReplacement(
+             MaterialPageRoute(builder: (BuildContext context) => BottomBar())),
+       }else{
+         print("No user"),
+         Navigator.of(context).pushReplacement(
+             MaterialPageRoute(builder: (BuildContext context) => Loginpage())),
+       }
+     });
+   }
+
   }
 
   @override
@@ -40,8 +36,6 @@ class _SplashState extends State<Splash> {
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     fetchUser();
     super.initState();
-
-    _initPackageInfo();
   }
 
   @override
@@ -53,12 +47,7 @@ class _SplashState extends State<Splash> {
   }
 
 
-  Future<void> _initPackageInfo() async {
-    final PackageInfo info = await PackageInfo.fromPlatform();
-    setState(() {
-      _packageInfo = info;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {

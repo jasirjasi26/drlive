@@ -18,6 +18,12 @@ final SharedValue<String> pass = SharedValue(
   autosave: true, // autosave to shared prefs when value changes
 );
 
+final SharedValue<String> role = SharedValue(
+  value: "", // initial value
+  key: "role", // disk storage key for shared_preferences
+  autosave: true, // autosave to shared prefs when value changes
+);
+
 final SharedValue<String> access_token = SharedValue(
   value: "", // initial value
   key: "access_token", // disk storage key for shared_preferences

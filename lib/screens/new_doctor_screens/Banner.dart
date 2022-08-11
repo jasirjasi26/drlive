@@ -4,8 +4,8 @@ import 'package:adobe_xd/pinned.dart';
 import 'package:adobe_xd/page_link.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Banner extends StatelessWidget {
-  Banner({
+class Banner1 extends StatelessWidget {
+  Banner1({
     Key key,
   }) : super(key: key);
   @override

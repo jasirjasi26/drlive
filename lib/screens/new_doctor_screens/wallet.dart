@@ -115,7 +115,7 @@ class wallet extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: const AssetImage(''),
+                      image: const AssetImage('assets/images/wallet.png'),
                       fit: BoxFit.fill,
                     ),
                   ),

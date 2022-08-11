@@ -26,17 +26,17 @@ class _ProfileEditState extends State<ProfileEdit> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TextEditingController _nameController =
-      TextEditingController(text: "${user_name.value}");
+      TextEditingController(text: "${user_name.value ?? ""}");
   TextEditingController _phoneController =
-  TextEditingController(text: "${user_phone.value}");
+  TextEditingController(text: "${user_phone.value?? ""}");
   TextEditingController _dobController =
-  TextEditingController(text: "${user_dob.value}");
+  TextEditingController(text: "${user_dob.value?? ""}");
   TextEditingController _addressController =
-  TextEditingController(text: "${user_address.value}");
+  TextEditingController(text: "${user_address.value?? ""}");
   TextEditingController _bloodController =
-  TextEditingController(text: "${user_blood.value}");
+  TextEditingController(text: "${user_blood.value?? ""}");
   TextEditingController _emailController =
-  TextEditingController(text: "${user_email.value}");
+  TextEditingController(text: "${user_email.value?? ""}");
 
   int _radioValue1 = 0;
 
@@ -208,10 +208,10 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      toolbarHeight: 200,
+      toolbarHeight: 120,
      // backgroundColor:  Color(0xff6b0772),
       flexibleSpace: Container(
-        height: 200,
+        height: 120,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -327,39 +327,6 @@ class _ProfileEditState extends State<ProfileEdit> {
                 ),
               ],
             ),
-            Center(
-              child:  Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                    color: const Color(0xfff3c306),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x29000000),
-                        offset: Offset(6, 3),
-                        blurRadius: 12,
-                      ),
-                    ],
-                  ),
-                  child:  Center(
-                    child: Container(
-                      height: 80,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: const AssetImage('assets/images/lady2.png'),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -405,11 +372,44 @@ class _ProfileEditState extends State<ProfileEdit> {
   buildProfileForm(context) {
     return Padding(
       padding:
-          const EdgeInsets.only(top: 20.0, bottom: 8.0, left: 16.0, right: 16.0),
+          const EdgeInsets.only(top: 10.0, bottom: 8.0, left: 16.0, right: 16.0),
       child: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child:  Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 80,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                    color: const Color(0xfff3c306),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0x29000000),
+                        offset: Offset(6, 3),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child:  Center(
+                    child: Container(
+                      height: 80,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: const AssetImage('assets/images/lady2.png'),
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
               child: Container(
