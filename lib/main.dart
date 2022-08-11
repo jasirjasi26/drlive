@@ -18,6 +18,7 @@ main() async {
     systemNavigationBarDividerColor: Colors.transparent,
   ));
 
+
   runApp(
     SharedValue.wrapApp(
       MyApp(),
